@@ -396,7 +396,7 @@
 
             <!-- 页面51：选项1反馈页（修复ID：page51 替代 page5-1） -->
             <div id="page51" class="page theme-yellow hidden-page">
-                <h2 class="glitch-title" style="font-size:1.8rem;">仇人送的花好难看 · 选择反馈</h2>
+                <h2 class="glitch-title">仇人送的花好难看 · 选择反馈</h2>
                 <div class="extra-feedback">
                     喂，让你看了？还评价上了。
                 </div>
@@ -405,7 +405,7 @@
 
             <!-- 页面52：选项2反馈页（修复ID：page52 替代 page5-2） -->
             <div id="page52" class="page theme-yellow hidden-page">
-                <h2 class="glitch-title" style="font-size:1.8rem;">仇人送的花好难看 · 选择反馈</h2>
+                <h2 class="glitch-title">仇人送的花好难看 · 选择反馈</h2>
                 <div class="extra-feedback">
                     这就不懂了吧，黄玫瑰的话语有四种，友谊嫉妒离别和爱，我真想不明白哪个词和我俩沾边！<br>友谊，哼，我俩从来就不是朋友。<br>嫉妒，他又自以为谁又嫉妒他了！<br>离别不就是在赶我走吗，真是想鸠占鹊巢想疯了。<br>爱，爱......我跟你说得着吗！
                 </div>
@@ -511,35 +511,6 @@
                     <button id="finalYesBtn" class="choice-btn">✨ 当然。</button>
                     <button id="finalNoBtn" class="choice-btn">💢 不喜欢，爬。</button>
                 </div>
-                <div class="tape-line"></div>
-                <div style="margin-top:20px; text-align:center; font-size:0.8rem; color:#9bcd6c;">© 2025 The Meant-to-be Archives</div>
-            </div>
-
-            <!-- 彩蛋页 -->
-            <div id="page11" class="page theme-green-black hidden-page">
-                <div class="eye-tape-deco"><i class="fas fa-heart"></i> <i class="fas fa-tape"></i> <i class="fas fa-star"></i></div>
-                <div class="glitch-title" style="font-size:1.9rem;">💖 彩蛋 💖</div>
-                <div class="story-text">
-                    <p>其实所有的"家产"都好好的，不用拯救，也不会离开。</p>
-                    <p>第七年，第八年，很多很多年，都会在。</p>
-                    <p>祝你永远有乱写的勇气，永远有想爱的人。</p>
-                </div>
-                <div class="button-group">
-                    <button class="cont-btn" onclick="showPage(0)">🔄 重新开始</button>
-                </div>
-            </div>
-
-            <!-- 赌气页 -->
-            <div id="page12" class="page theme-yellow hidden-page">
-                <div class="eye-tape-deco"><i class="fas fa-angry"></i> <i class="fas fa-tape"></i> <i class="fas fa-middle-finger"></i></div>
-                <div class="glitch-title" style="font-size:1.9rem;">💢 赌气 💢</div>
-                <div class="story-text">
-                    <p>爬就爬！谁稀罕！</p>
-                    <p>......但你要是后悔了，点下面的按钮我就原谅你。</p>
-                </div>
-                <div class="button-group">
-                    <button class="cont-btn" onclick="showPage(11)">🙏 我错了</button>
-                </div>
             </div>
             `;
         }
@@ -552,33 +523,33 @@
             // 格式化文本（br转p）
             formatStoryTexts();
             
-            // 绑定初始页按钮
+            // 绑定初始按钮事件
             document.getElementById('startBtn').addEventListener('click', () => showPage(1));
             document.getElementById('testmentBtn').addEventListener('click', () => showPage(2));
             document.getElementById('turnPageBtn').addEventListener('click', () => showPage(8));
             
-            // 绑定最终页按钮
-            document.getElementById('finalYesBtn').addEventListener('click', () => showPage(11));
-            document.getElementById('finalNoBtn').addEventListener('click', () => showPage(12));
+            // 绑定最终页按钮事件
+            document.getElementById('finalYesBtn').addEventListener('click', () => {
+                alert(爽哉。我也喜欢你。);
+                showPage(0); // 回到初始页
+                // 重置状态
+                choiceRecord = { page3: null, page4: null, page5: null, page6: null, page9: null };
+                pageLocked = { page3: false, page4: false, page5: false, page6: false, page7: false, page8: false, page9: false, page10: false };
+           
+            });
             
-            // 配置所有分支选项
-            setupChoice('pg3-btns', 'page21', 'page22', 'page2', {}, false);
-            setupChoice('pg4-btns', 'page31', 'page32', 'page3', {});
-            setupChoice('pg5-btns', 'page41', 'page42', 'page4', {});
-            setupChoice('pg6-btns', 'page51', 'page52', 'page5', {});
-            setupChoice('pg7-btns', 'page61', 'page62', 'page6', {});
-            setupChoice('pg9-btns', 'page81', 'page82', 'page8', {}, false);
-            setupChoice('pg10-btns', 'page91', 'page92', 'page9', {});
-            
-            // 默认显示初始页
-            showPage(0);
+            // 初始化所有分支逻辑
+            setupChoice('pg3-btns', 'page21', 'page22', 'page2', null, false);
+            setupChoice('pg4-btns', 'page31', 'page32', 'page3', null);
+            setupChoice('pg5-btns', 'page41', 'page42', 'page4', null);
+            setupChoice('pg6-btns', 'page51', 'page52', 'page5', null);
+            setupChoice('pg7-btns', 'page61', 'page62', 'page6', null);
+            setupChoice('pg9-btns', 'page81', 'page82', 'page8', null, false);
+            setupChoice('pg10-btns', 'page91', 'page92', 'page9', null);
         }
         
         // 页面加载完成后初始化
         window.addEventListener('DOMContentLoaded', initPages);
-        
-        // 暴露showPage到全局（供按钮onclick调用）
-        window.showPage = showPage;
     })();
 </script>
 </body>
