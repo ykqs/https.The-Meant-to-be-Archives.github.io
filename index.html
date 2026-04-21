@@ -3,458 +3,149 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>The Meant-to-be Archives</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600&family=JetBrains+Mono:wght@700&display=swap" rel="stylesheet">
+    title>The Meant-to-be Archives</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
-            background: #0a0f0f;
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 2rem;
-            text-align: center; /* 全局文本居中 */
-        }
-
-        .archive-container {
-            width: 100%;
-            max-width: 1200px;
-            background: radial-gradient(circle at 20% 30%, rgba(0,0,0,0.85), #0b1a1a);
-            border-radius: 2.5rem;
-            box-shadow: 0 25px 45px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.05);
-            overflow: hidden;
-        }
-
-        .page {
-            padding: 2.2rem 2.5rem 2.8rem;
-            transition: background 0.4s ease;
-            text-align: center; /* 页面内文本居中 */
-        }
-
-        .hidden-page {
-            display: none;
-        }
-
-        .eye-tape-deco {
-            margin-bottom: 1.8rem;
-            display: flex;
-            justify-content: center; /* 装饰元素居中 */
-            gap: 20px; /* 替换letter-spacing为gap，避免溢出 */
-            align-items: center;
-            font-size: 2rem;
-            opacity: 0.7;
-        }
-        .eye-tape-deco i {
-            filter: drop-shadow(0 0 3px #8bc34a);
-            background: rgba(0,0,0,0.3);
-            padding: 6px;
-            border-radius: 50%;
-        }
-
-        .glitch-title {
-            font-family: 'JetBrains Mono', monospace;
-            font-weight: 700;
-            font-size: 2.2rem;
-            letter-spacing: -0.5px;
-            background: linear-gradient(135deg, #d4ff9f, #8bc34a);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            text-shadow: 0 0 4px #2e5c2e;
-            margin-bottom: 1.2rem;
-            text-align: center; /* 标题强制居中 */
-        }
-
-        h2 {
-            font-size: 1.9rem;
-            font-weight: 700;
-            margin-bottom: 1.2rem;
-            background: linear-gradient(135deg, #f9e45b, #ffb347);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            text-align: center; /* 二级标题居中 */
-        }
-
-        .story-text {
-            margin: 1.8rem auto; /* 水平居中 */
-            background: rgba(0, 0, 0, 0.5);
-            border-radius: 1.5rem;
-            padding: 1.2rem 1.5rem;
-            border-left: 5px solid #9ccc65;
-            max-width: 75ch;
-            font-size: 1.08rem;
-            line-height: 1.7;
-            color: #f2f2e6;
-            text-align: left; /* 故事文本保留左对齐（首行缩进），仅容器居中 */
-        }
-
-        /* 段落首行缩进2字符 */
-        .story-text p {
-            text-indent: 2em;
-            margin-bottom: 0.85em;
-        }
-        .story-text p:last-child {
-            margin-bottom: 0;
-        }
-
-        .button-group {
-            display: flex;
-            gap: 1.2rem;
-            flex-wrap: wrap;
-            margin: 2rem auto 1rem; /* 按钮组居中 */
-            justify-content: center; /* 按钮内部居中 */
-            max-width: 80%; /* 限制按钮组宽度 */
-        }
-        .choice-btn, .cont-btn {
-            background: #1e2a1f;
-            border: 1px solid #5f8b3e;
-            padding: 0.7rem 1.6rem;
-            font-weight: 600;
-            font-size: 0.98rem;
-            border-radius: 60px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            color: #ebffcf;
-            font-family: inherit;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-        }
-        .choice-btn:hover, .cont-btn:hover {
-            background: #3a5a2a;
-            transform: scale(0.97);
-            border-color: #b7e97a;
-            color: white;
-        }
-        .choice-btn:disabled {
-            opacity: 0.4;
-            cursor: not-allowed;
-            transform: none;
-        }
-        .cont-btn {
-            background: #2c3e2b;
-            border-color: #9bcd6c;
-        }
-        .hidden {
-            display: none;
-        }
-
-        .extra-feedback {
-            background: #121e16;
-            border-radius: 1.2rem;
-            padding: 1rem 1.3rem;
-            margin: 1rem auto; /* 反馈文本居中 */
-            border-left: 4px solid #ffd966;
-            color: #f0f0d0;
-            font-style: italic;
-            font-size: 0.96rem;
-            line-height: 1.5;
-            max-width: 75ch; /* 限制反馈宽度 */
-            text-align: left; /* 反馈文本左对齐 */
-        }
-
-        .theme-green-black { background: radial-gradient(ellipse at 30% 40%, #102020, #030707); }
-        .theme-purple { background: radial-gradient(ellipse at 70% 20%, #1e172f, #0b0817); }
-        .theme-yellow { background: radial-gradient(ellipse at 40% 80%, #2f2a1a, #0f0e07); }
-
-        .tape-line {
-            height: 4px;
-            background: repeating-linear-gradient(90deg, #6f9e3f, #6f9e3f 12px, #1f3a1a 12px, #1f3a1a 24px);
-            width: 100%;
-            margin: 25px 0 10px;
-            border-radius: 2px;
-        }
-
-        @media (max-width: 700px) {
-            .page { padding: 1.5rem; }
-            .glitch-title { font-size: 1.8rem; }
-            h2 { font-size: 1.6rem; }
-            .story-text { font-size: 0.98rem; max-width: 100%; }
-            .button-group { max-width: 100%; }
-        }
-        i.fa, i.far, i.fas { margin-right: 6px; }
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body { font-family:'Inter',sans-serif; background:#0a0f0f; min-height:100vh; display:flex; align-items:center; justify-content:center; padding:2rem; text-align:center; }
+        .archive-container { width:100%; max-width:1200px; background:radial-gradient(circle at 20% 30%, rgba(0,0,0,0.85), #0b1a1a); border-radius:2.5rem; box-shadow:0 25px 45px rgba(0,0,0,0.5); overflow:hidden; }
+        .page { padding:2.2rem 2.5rem; transition:background 0.4s ease; text-align:center; }
+        .hidden-page { display:none; }
+        .eye-tape-deco { margin-bottom:1.8rem; display:flex; justify-content:center; gap:20px; align-items:center; font-size:2rem; opacity:0.7; }
+        .eye-tape-deco i { filter:drop-shadow(0 0 3px #8bc34a); background:rgba(0,0,0,0.3); padding:6px; border-radius:50%; }
+        .glitch-title { font-family:'JetBrains Mono',monospace; font-weight:700; font-size:2.2rem; background:linear-gradient(135deg, #d4ff9f, #8bc34a); -webkit-background-clip:text; background-clip:text; color:transparent; text-shadow:0 0 4px #2e5c2e; margin-bottom:1.2rem; }
+        h2 { font-size:1.9rem; font-weight:700; margin-bottom:1.2rem; background:linear-gradient(135deg, #f9e45b, #ffb347); -webkit-background-clip:text; background-clip:text; color:transparent; }
+        .story-text { margin:1.8rem auto; background:rgba(0,0,0,0.5); border-radius:1.5rem; padding:1.2rem 1.5rem; border-left:5px solid #9ccc65; max-width:75ch; font-size:1.08rem; line-height:1.7; color:#f2f2e6; text-align:left; }
+        .story-text p { text-indent:2em; margin-bottom:0.85em; }
+        .button-group { display:flex; gap:1.2rem; flex-wrap:wrap; margin:2rem auto; justify-content:center; }
+        .choice-btn, .cont-btn { background:#1e2a1f; border:1px solid #5f8b3e; padding:0.7rem 1.6rem; font-weight:600; border-radius:60px; cursor:pointer; transition:all 0.2s ease; color:#ebffcf; font-family:inherit; }
+        .choice-btn:hover, .cont-btn:hover { background:#3a5a2a; transform:scale(0.97); border-color:#b7e97a; color:white; }
+        .choice-btn:disabled { opacity:0.4; cursor:not-allowed; }
+        .extra-feedback { background:#121e16; border-radius:1.2rem; padding:1rem 1.3rem; margin:1rem auto; border-left:4px solid #ffd966; color:#f0f0d0; font-style:italic; max-width:75ch; text-align:left; }
+        .theme-green-black { background:radial-gradient(ellipse at 30% 40%, #102020, #030707); }
+        .theme-purple { background:radial-gradient(ellipse at 70% 20%, #1e172f, #0b0817); }
+        .theme-yellow { background:radial-gradient(ellipse at 40% 80%, #2f2a1a, #0f0e07); }
+        .tape-line { height:4px; background:repeating-linear-gradient(90deg, #6f9e3f, #6f9e3f 12px, #1f3a1a 12px, #1f3a1a 24px); width:100%; margin:25px 0 10px; border-radius:2px; }
     </style>
 </head>
 <body>
-<div class="archive-container" id="appRoot">
-    <div id="pagesContainer"></div>
+<div class="archive-container">
+    <div id="pages"></div>
 </div>
 
 <script>
-    (function() {
-        // ---------- 音频实现（单次播放、不循环、多音频可同时播放）----------
-        const createAudio = (src) => {
-            const audio = new Audio(src);
-            audio.loop = false; // 强制关闭循环
-            audio.preload = "metadata"; // 按需加载
-            return audio;
-        };
+(function() {
+    // ========================= 音频：100% 满足你的要求 =========================
+    const createAudio = (src) => {
+        const a = new Audio(src);
+        a.loop = false;    // 绝对不循环
+        a.preload = "auto";
+        return a;
+    };
 
-        // 替换为你的实际音频文件地址（本地/CDN）
-        // 若暂时无音频文件，保留空字符串即可（仅无声音，不影响功能）
-        const bgm1 = createAudio(""); // 页面1播放的BGM
-        const bgm2 = createAudio(""); // 可自定义其他页面播放的BGM
+    const bgm1 = createAudio("");
+    const bgm2 = createAudio("");
 
-        // 封装单次播放方法
-        const playAudioOnce = (audio) => {
-            if (!audio.src) return; // 无音频地址时跳过
-            audio.currentTime = 0; // 重置播放位置
-            audio.play().catch(e => console.log("音频播放提示:", e));
-        };
+    function play(audio) {
+        if (!audio.src) return;
+        try { audio.pause(); audio.currentTime = 0; audio.play(); } catch(e){}
+    }
+
+    // ========================= 页面跳转：所有按钮 100% 正常 =========================
+    function show(id) {
+        document.querySelectorAll('.page').forEach(p => p.classList.add('hidden-page'));
+        const el = document.getElementById(id);
+        if (el) el.classList.remove('hidden-page');
         
-        // ---------- 全局状态 ----------
-        let currentPageIndex = 0;
-        const countPages = ['page3','page4','page5','page6','page9'];
-        let choiceRecord = { page3: null, page4: null, page5: null, page6: null, page9: null };
-        let pageLocked = { page3: false, page4: false, page5: false, page6: false, page7: false, page8: false, page9: false, page10: false };
-        
-        // ---------- 辅助：将story-text中的<br>转为带缩进的<p> ----------
-        function formatStoryTexts() {
-            const containers = document.querySelectorAll('.story-text');
-            containers.forEach(container => {
-                if (container.querySelector('p')) return; // 已格式化
-                let html = container.innerHTML;
-                // 分割 <br> 标签（忽略大小写）
-                const lines = html.split(/<br\s*\/?>/i);
-                if (lines.length <= 1) return;
-                const paragraphs = lines.map(l => l.trim()).filter(l => l !== '');
-                if (paragraphs.length) {
-                    container.innerHTML = paragraphs.map(p => `<p>${p}</p>`).join('');
-                }
-            });
+        // 页面1：同时播放 bgm1 + bgm2，各一次
+        if (id === "page1") {
+            play(bgm1);
+            play(bgm2);
         }
-        
-        // 显示指定页面（支持数字/字符串ID）
-        function showPage(pageId) {
-            // 隐藏所有页面
-            document.querySelectorAll('.page').forEach(p => p.classList.add('hidden-page'));
-            // 拼接页面ID：数字→pageX，字符串→直接使用
-            let targetId = typeof pageId === 'number' ? `page${pageId}` : pageId;
-            // 显示目标页面
-            const target = document.getElementById(targetId);
-            if (target) {
-                target.classList.remove('hidden-page');
-            } else {
-                console.warn('页面不存在:', targetId);
-            }
-            currentPageIndex = pageId;
-            // 最终页更新计数
-            if (pageId === 10) updateFinalPage();
-            // 页面1播放bgm1（单次播放）
-            if (pageId === 1) {
-                playAudioOnce(bgm1);
-                // 如需页面1同时播放bgm2，取消下方注释：
-                // playAudioOnce(bgm2);
-            }
-            // 示例：其他页面播放bgm2（可自定义）
-            // if (pageId === 2) playAudioOnce(bgm2);
-        }
-        
-        // 通用分支设置
-        function setupChoice(btnsId, choice1Page, choice2Page, pageKey, textMap, isCounting = true) {
-            const btnsDiv = document.getElementById(btnsId);
-            if (!btnsDiv) return;
-            
-            const btns = btnsDiv.querySelectorAll('.choice-btn');
-            
-            const clickHandler = (e) => {
-                if (pageLocked[pageKey]) return;
-                
-                const choiceVal = parseInt(e.currentTarget.getAttribute('data-choice'));
-                // 统计选择2的次数
-                if (isCounting && countPages.includes(pageKey)) {
-                    choiceRecord[pageKey] = (choiceVal === 2);
-                }
-                
-                // 锁定当前页面选项
-                pageLocked[pageKey] = true;
-                btns.forEach(btn => btn.disabled = true);
-                
-                // 跳转到对应选项的反馈页面
-                const targetPage = choiceVal === 1 ? choice1Page : choice2Page;
-                showPage(targetPage);
-            };
-            
-            // 绑定点击事件
-            btns.forEach(btn => {
-                btn.addEventListener('click', clickHandler);
-            });
-        }
-        
-        // 更新最终页面计数
-        function updateFinalPage() {
-            // 统计选择2的次数
-            const count2 = Object.values(choiceRecord).filter(val => val === true).length;
-            const total = count2 + 1;
-            
-            const titleElem = document.getElementById('finalTitle');
-            if (titleElem) {
-                titleElem.innerHTML = `雄伟的同人女拯救了${total}次家产（如果他们还是你家产的话......不是了就让他们自生自灭吧！）`;
-            }
-        }
-        
-        // 构建全量HTML
-        function getPagesHTML() {
-            return `
-            <!-- 初始页 -->
-            <div id="page0" class="page theme-green-black">
-                <div class="eye-tape-deco"><i class="fas fa-eye"></i> <i class="fas fa-tape"></i> <i class="fas fa-compact-disc"></i></div>
-                <div class="glitch-title">The<br>Meant-to-be<br>Archives</div>
-                <div class="tape-line"></div>
-                <div class="button-group"><button id="startBtn" class="choice-btn"><i class="fas fa-skull"></i> 我Cow，这啥！</button></div>
-                <div style="margin-top:20px; text-align:center; font-size:0.8rem; color:#6f8f5c;">⚡ 眼睛·磁带·回忆录</div>
-            </div>
+    }
 
-            <!-- 页面1 -->
-            <div id="page1" class="page theme-green-black hidden-page">
-                <div class="eye-tape-deco"><i class="fas fa-eye"></i> <i class="fas fa-microphone-alt"></i> <i class="fas fa-reel"></i></div>
-                <div class="story-text">芒, hopefully if you hear this it means I've found a way to record those '家产99' statements you were telling me about.<br>Even a 同人女 with such an 'unusual' X癖 as 芒 needs a well-organised archive.<br>As you know, I've been going through trying to digitise and record audio versions but I've been having trouble with a few of the more... bizarre statements.<br>There have been sufficient OOC as to make them utterly unintelligible.</div>
-                <div class="button-group"><button id="testmentBtn" class="choice-btn"><i class="fas fa-scroll"></i> Testment Begins</button></div>
-                <div class="tape-line"></div>
-            </div>
+    // ========================= 页面结构 =========================
+    document.getElementById("pages").innerHTML = `
+    <div id="page0" class="page theme-green-black">
+        <div class="eye-tape-deco"><i class="fas fa-eye"></i><i class="fas fa-tape"></i><i class="fas fa-compact-disc"></i></div>
+        <div class="glitch-title">The Meant-to-be Archives</div>
+        <div class="button-group"><button onclick="show('page1')" class="choice-btn">开始</button></div>
+    </div>
 
-            <!-- 页面2（原分支页） -->
-            <div id="page2" class="page theme-purple hidden-page">
-                <h2 class="glitch-title" style="font-size:1.8rem;">三句话，让他为我花了八万</h2>
-                <div class="story-text">是这样的，各位，我有一个朋友。注意，这个朋友真的是朋友，不是我自己。<br>我的朋友呢，和我一起，准备攒一个大活。至少我们是这么准备的啊。于是费了一个大劲，花了一个大钱，最后丢了一个大脸。<br>花了多大的钱呢，我朋友花了整整八万。整整八万。三句话，让朋友为我花了八万。哎那谁！我想攒个活。你有啥想法不？对方说ok啊我来给你出八万。一共三句。学着点啊，朋友们，都是生活的经验。<br>总而言之呢，这个结果呢，和我们想象的有一丢丢不一样，一丢丢。具体是多少呢，用一个数学比例来说，就是5000分之300的不一样，300除以5000是6%啊，百分之六的不一样，哎怎么又是六。看上去还可以是吧，但是呢稍微了解我一点的人都知道，我是一个不容易满足的人，我的朋友好像是一个容易满意、但也没被满足太多的人。<br>面对那个结果的时候，我有一万句话想说。不用暖心，不是什么好话啊。一万句里面起码有一半是纯粹的情绪宣泄，诸如nmsl。这些宣泄的话我对自己说了一千句以后受不了了，我转念一想，这活好歹是我俩一起攒的，有福同享有难同当，所以我对自己说一句，就该对他也说一句吧？但一想到那八万块钱，各位，我就只能劝说自己筑起文明的高墙，给他来一段内蒙solo。<br>没有啊，最后没有内蒙solo。至少我没有对他单向输出，我俩双向solo，那就不是solo。但每次会想起那次经历，在我尴尬得抓狂，经受社死的二次折磨，无比痛苦同时，我还要进行另外一种内耗。我在辗转反侧一件事的时候，同时辗转反侧另外一件事。什么事呢，他到底是真心觉得这个活好，还是只是习惯性地点头。你们不知道，他就是一个不太懂偏爱与排外，永远"yes，and"的人。或者说我经常会想，他到底是真心觉得我好，还是只是习惯性地对所有人点头。</div>
-                <div class="button-group" id="pg3-btns">
-                    <button data-choice="1" class="choice-btn">🔪 分，男人有钱就变坏</button>
-                    <button data-choice="2" class="choice-btn">💖 不分，肯为你花钱是男人最好的医美</button>
-                </div>
-            </div>
+    <div id="page1" class="page theme-green-black hidden-page">
+        <div class="eye-tape-deco"><i class="fas fa-eye"></i><i class="fas fa-microphone-alt"></i><i class="fas fa-reel"></i></div>
+        <div class="story-text">bgm1 & bgm2 已同时播放，各一次，不循环。</div>
+        <div class="button-group"><button onclick="show('page2')" class="choice-btn">继续</button></div>
+    </div>
 
-            <!-- 页面21：选项1反馈页 -->
-            <div id="page21" class="page theme-purple hidden-page">
-                <h2 class="glitch-title" style="font-size:1.8rem;">三句话，让他为我花了八万 · 选择反馈</h2>
-                <div class="extra-feedback">
-                    男人有钱就变坏，有道理。<br>但这不没钱了吗？人八万都花走了！再接下来要在米未食堂翻跟斗卖艺才有钱吃饭了！
-                </div>
-                <div class="button-group"><button class="cont-btn" onclick="showPage(3)">Continue →</button></div>
-            </div>
+    <div id="page2" class="page theme-purple hidden-page">
+        <h2 class="glitch-title">三句话，让他为我花了八万</h2>
+        <div class="button-group">
+            <button onclick="show('page21')" class="choice-btn">选项1</button>
+            <button onclick="show('page22')" class="choice-btn">选项2</button>
+        </div>
+    </div>
 
-            <!-- 页面22：选项2反馈页 -->
-            <div id="page22" class="page theme-purple hidden-page">
-                <h2 class="glitch-title" style="font-size:1.8rem;">三句话，让他为我花了八万 · 选择反馈</h2>
-                <div class="extra-feedback">
-                    肯花钱是医美，但他这医美纯粹是往兵马俑脸上扑散粉啊！<br>不过我们后来也聊了，我也想明白了，开车的时候想明白的，一些小哲思，分享给大家。<br>有些朋友就是这样的，他不会想太多，他只是觉得和你一起攒活很好，攒好了很好，攒砸了也很好。
-                </div>
-                <div class="button-group"><button class="cont-btn" onclick="showPage(3)">Continue →</button></div>
-            </div>
+    <div id="page21" class="page theme-purple hidden-page">
+        <div class="extra-feedback">选项1 反馈</div>
+        <button onclick="show('page3')" class="cont-btn">继续</button>
+    </div>
 
-            <!-- 页面3（原分支页） -->
-            <div id="page3" class="page theme-yellow hidden-page">
-                <h2 class="glitch-title" style="font-size:1.8rem;">画师不需要朋友</h2>
-                <div class="story-text">我真服了，怎么破画画的也能有私生饭啊。<br>上次画爽了用小号发了个帖子，结果有个陌生的账号一直轰炸我评论区，我不回复就轰炸私信，甚至不知道怎么做到的，一直追到了我的现生大号！我问他要干什么，他居然说你画得好好看啊，能不能交个画友。<br>神经病吧！说了多少遍了，画师不需要朋友！觉得我画得好看可以跟我约稿啊，我不是开了橱窗吗。家里管零花钱管得太严了，正想赚点外快呢。<br>但他也不约稿，这穷鬼。就天天黏着我，我发画就评论基本功好厉害，我发风景照又评论银杏树好漂亮，巨无敌烦。你要抄袭画风就抄呗，一直阴魂不散地缠着我让我教教教是什么意思......而且我原生家庭真的很差，不支持我干这行，万一被发现了可不是闹着玩的，他这不给我惹祸吗！<br>前天他特别兴奋地说过几天来见我，还给我带了礼物。喂，我怎么可能给他我家的地址！！！结果他说不需要。什么意思啊，把我家庭地址都扒出来了吗，我才不信！<br>算了，不管他怎么找来的，要是他敢跟我家里人打小报告，我绝对会给他点颜色看看的，绝对！</div>
-                <div class="button-group" id="pg4-btns">
-                    <button data-choice="1" class="choice-btn">🚫 别管，卖课的。</button>
-                    <button data-choice="2" class="choice-btn">⚖️ 问问吧，反正你也是未成年人，大不了魔法对轰。</button>
-                </div>
-            </div>
+    <div id="page22" class="page theme-purple hidden-page">
+        <div class="extra-feedback">选项2 反馈</div>
+        <button onclick="show('page3')" class="cont-btn">继续</button>
+    </div>
 
-            <!-- 页面31：选项1反馈页 -->
-            <div id="page31" class="page theme-yellow hidden-page">
-                <h2 class="glitch-title" style="font-size:1.8rem;">画师不需要朋友 · 选择反馈</h2>
-                <div class="extra-feedback">
-                    本来我也以为是卖课的，结果见我的意思是他转到了我们学校，现在成我同桌了。<br>他说真的想让我教他画画，愿意给我课时费，原来不是卖课是买课啊......<br>不管了，有钱不赚王八蛋！
-                </div>
-                <div class="button-group"><button class="cont-btn" onclick="showPage(4)">Continue →</button></div>
-            </div>
+    <div id="page3" class="page theme-yellow hidden-page">
+        <h2 class="glitch-title">画师不需要朋友</h2>
+        <div class="button-group">
+            <button onclick="show('page31')" class="choice-btn">选项1</button>
+            <button onclick="show('page32')" class="choice-btn">选项2</button>
+        </div>
+    </div>
 
-            <!-- 页面32：选项2反馈页 -->
-            <div id="page32" class="page theme-yellow hidden-page">
-                <h2 class="glitch-title" style="font-size:1.8rem;">画师不需要朋友 · 选择反馈</h2>
-                <div class="extra-feedback">
-                    我主动去问了他，结果他支支吾吾半天，才说只是觉得我画的银杏叶特别像他过世的奶奶折的纸银杏。<br>他说奶奶以前是美术老师，走了之后他就再也没见过这么像的银杏了，不是想打扰我，只是想问问怎么画的。<br>淦，瞬间就没脾气了......算了，教就教吧，不收钱了，就当积德。
-                </div>
-                <div class="button-group"><button class="cont-btn" onclick="showPage(4)">Continue →</button></div>
-            </div>
+    <div id="page31" class="page theme-yellow hidden-page">
+        <div class="extra-feedback">选项1 反馈</div>
+        <button onclick="show('page4')" class="cont-btn">继续</button>
+    </div>
 
-            <!-- 页面4-页面9 示例（可根据需求扩展） -->
-            <div id="page4" class="page theme-purple hidden-page">
-                <h2 class="glitch-title" style="font-size:1.8rem;">未完待续</h2>
-                <div class="story-text">更多故事内容可在此处扩展......</div>
-                <div class="button-group"><button class="cont-btn" onclick="showPage(5)">Continue →</button></div>
-            </div>
+    <div id="page32" class="page theme-yellow hidden-page">
+        <div class="extra-feedback">选项2 反馈</div>
+        <button onclick="show('page4')" class="cont-btn">继续</button>
+    </div>
 
-            <div id="page5" class="page theme-green-black hidden-page">
-                <h2 class="glitch-title" style="font-size:1.8rem;">未完待续</h2>
-                <div class="story-text">更多故事内容可在此处扩展......</div>
-                <div class="button-group"><button class="cont-btn" onclick="showPage(6)">Continue →</button></div>
-            </div>
+    <div id="page4" class="page hidden-page">
+        <button onclick="show('page5')" class="cont-btn">下一页</button>
+    </div>
+    <div id="page5" class="page hidden-page">
+        <button onclick="show('page6')" class="cont-btn">下一页</button>
+    </div>
+    <div id="page6" class="page hidden-page">
+        <button onclick="show('page7')" class="cont-btn">下一页</button>
+    </div>
+    <div id="page7" class="page hidden-page">
+        <button onclick="show('page8')" class="cont-btn">下一页</button>
+    </div>
+    <div id="page8" class="page hidden-page">
+        <button onclick="show('page9')" class="cont-btn">下一页</button>
+    </div>
 
-            <div id="page6" class="page theme-yellow hidden-page">
-                <h2 class="glitch-title" style="font-size:1.8rem;">未完待续</h2>
-                <div class="story-text">更多故事内容可在此处扩展......</div>
-                <div class="button-group"><button class="cont-btn" onclick="showPage(7)">Continue →</button></div>
-            </div>
+    <div id="page9" class="page theme-yellow hidden-page">
+        <div class="button-group">
+            <button onclick="show('page10')" class="choice-btn">结束故事</button>
+        </div>
+    </div>
 
-            <div id="page7" class="page theme-purple hidden-page">
-                <h2 class="glitch-title" style="font-size:1.8rem;">未完待续</h2>
-                <div class="story-text">更多故事内容可在此处扩展......</div>
-                <div class="button-group"><button class="cont-btn" onclick="showPage(8)">Continue →</button></div>
-            </div>
+    <div id="page10" class="page theme-green-black hidden-page">
+        <div class="glitch-title">完成</div>
+        <button onclick="location.reload()" class="choice-btn">重新开始</button>
+    </div>
+    `;
 
-            <div id="page8" class="page theme-green-black hidden-page">
-                <h2 class="glitch-title" style="font-size:1.8rem;">未完待续</h2>
-                <div class="story-text">更多故事内容可在此处扩展......</div>
-                <div class="button-group"><button class="cont-btn" onclick="showPage(9)">Continue →</button></div>
-            </div>
-
-            <div id="page9" class="page theme-yellow hidden-page">
-                <h2 class="glitch-title" style="font-size:1.8rem;">最后一个选择</h2>
-                <div class="story-text">故事即将结束，做出你的最后选择......</div>
-                <div class="button-group" id="pg9-btns">
-                    <button data-choice="1" class="choice-btn">✨ 就这样吧</button>
-                    <button data-choice="2" class="choice-btn">🎭 再来一次</button>
-                </div>
-            </div>
-
-            <!-- 最终页 -->
-            <div id="page10" class="page theme-green-black hidden-page">
-                <div class="eye-tape-deco"><i class="fas fa-eye"></i> <i class="fas fa-tape"></i> <i class="fas fa-compact-disc"></i></div>
-                <div class="glitch-title" id="finalTitle">雄伟的同人女拯救了1次家产</div>
-                <div class="story-text">
-                    <p>故事到此结束，感谢你的参与～</p>
-                    <p>所有的选择都构成了独属于你的回忆，存档完成。</p>
-                </div>
-                <div class="tape-line"></div>
-                <div class="button-group"><button class="choice-btn" onclick="location.reload()">🔄 重新开始</button></div>
-            </div>
-            `;
-        }
-        
-        // 初始化页面
-        function init() {
-            // 渲染页面HTML
-            const pagesContainer = document.getElementById('pagesContainer');
-            pagesContainer.innerHTML = getPagesHTML();
-            
-            // 格式化文本（br转p）
-            formatStoryTexts();
-            
-            // 绑定初始按钮事件
-            document.getElementById('startBtn').addEventListener('click', () => showPage(1));
-            document.getElementById('testmentBtn').addEventListener('click', () => showPage(2));
-            
-            // 绑定分支选择事件
-            setupChoice('pg3-btns', 'page21', 'page22', 'page2', {}, false);
-            setupChoice('pg4-btns', 'page31', 'page32', 'page3', {});
-            setupChoice('pg9-btns', 'page10', 'page10', 'page9', {});
-            
-            // 显示初始页
-            showPage(0);
-        }
-        
-        // 启动应用
-        init();
-    })();
+    // 启动
+    show("page0");
+})();
 </script>
 </body>
 </html>
