@@ -2,168 +2,515 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
     <title>The Meant-to-be Archives</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=JetBrains+Mono:wght@700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600&family=JetBrains+Mono:wght@700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
-        * { margin:0; padding:0; box-sizing:border-box; }
-        body { font-family: 'Inter', sans-serif; background:#0a0f0f; min-height:100vh; display:flex; align-items:center; justify-content:center; padding:2rem; text-align:center; }
-        .archive-container { width:100%; max-width:1200px; background:radial-gradient(circle at 20% 30%, rgba(0,0,0,0.85), #0b1a1a); border-radius:2.5rem; box-shadow:0 25px 45px rgba(0,0,0,0.5); overflow:hidden; }
-        .page { padding:2rem; transition:background 0.4s; }
-        .hidden { display:none; }
-        .eye-tape-deco { margin-bottom:1.5rem; display:flex; justify-content:center; gap:20px; font-size:2rem; opacity:0.7; }
-        .glitch-title { font-family:'JetBrains Mono', monospace; font-size:2rem; background:linear-gradient(135deg, #d4ff9f, #8bc34a); -webkit-background-clip:text; background-clip:text; color:transparent; margin-bottom:1rem; }
-        h2 { font-size:1.6rem; background:linear-gradient(135deg, #f9e45b, #ffb347); -webkit-background-clip:text; background-clip:text; color:transparent; margin-bottom:1rem; }
-        .story-text { margin:1.5rem auto; background:rgba(0,0,0,0.5); border-radius:1rem; padding:1.2rem; border-left:5px solid #9ccc65; max-width:75ch; font-size:1rem; line-height:1.7; color:#f2f2e6; text-align:left; }
-        .story-text p { text-indent:2em; margin-bottom:0.8em; }
-        .button-group { display:flex; gap:1rem; flex-wrap:wrap; margin:2rem auto; justify-content:center; }
-        .choice-btn, .cont-btn { background:#1e2a1f; border:1px solid #5f8b3e; padding:0.7rem 1.5rem; font-weight:600; border-radius:60px; cursor:pointer; color:#ebffcf; transition:all 0.2s; }
-        .choice-btn:hover, .cont-btn:hover { background:#3a5a2a; transform:scale(0.97); border-color:#b7e97a; color:white; }
-        .extra-feedback { background:#121e16; border-radius:1rem; padding:1rem; margin:1rem auto; border-left:4px solid #ffd966; color:#f0f0d0; font-style:italic; max-width:75ch; text-align:left; }
-        .theme-green-black { background:radial-gradient(ellipse at 30% 40%, #102020, #030707); }
-        .theme-purple { background:radial-gradient(ellipse at 70% 20%, #1e172f, #0b0817); }
-        .theme-yellow { background:radial-gradient(ellipse at 40% 80%, #2f2a1a, #0f0e07); }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            background: #0a0f0f;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .archive-container {
+            width: 100%;
+            max-width: 1200px;
+            background: radial-gradient(circle at 20% 30%, rgba(0,0,0,0.85), #0b1a1a);
+            border-radius: 2.5rem;
+            box-shadow: 0 25px 45px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.05);
+            overflow: hidden;
+        }
+
+        .page {
+            padding: 2.2rem 2.5rem 2.8rem;
+            transition: background 0.4s ease;
+            text-align: center;
+        }
+
+        .hidden-page {
+            display: none;
+        }
+
+        .eye-tape-deco {
+            margin-bottom: 1.8rem;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            align-items: center;
+            font-size: 2rem;
+            opacity: 0.7;
+        }
+        .eye-tape-deco i {
+            filter: drop-shadow(0 0 3px #8bc34a);
+            background: rgba(0,0,0,0.3);
+            padding: 6px;
+            border-radius: 50%;
+        }
+
+        .glitch-title {
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 700;
+            font-size: 2.2rem;
+            letter-spacing: -0.5px;
+            background: linear-gradient(135deg, #d4ff9f, #8bc34a);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 0 4px #2e5c2e;
+            margin-bottom: 1.2rem;
+            text-align: center;
+        }
+
+        h2 {
+            font-size: 1.9rem;
+            font-weight: 700;
+            margin-bottom: 1.2rem;
+            background: linear-gradient(135deg, #f9e45b, #ffb347);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-align: center;
+        }
+
+        .story-text {
+            margin: 1.8rem auto;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 1.5rem;
+            padding: 1.2rem 1.5rem;
+            border-left: 5px solid #9ccc65;
+            max-width: 75ch;
+            font-size: 1.08rem;
+            line-height: 1.7;
+            color: #f2f2e6;
+            text-align: left;
+        }
+
+        .story-text p {
+            text-indent: 2em;
+            margin-bottom: 0.85em;
+        }
+        .story-text p:last-child {
+            margin-bottom: 0;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 1.2rem;
+            flex-wrap: wrap;
+            margin: 2rem auto 1rem;
+            justify-content: center;
+            max-width: 80%;
+        }
+        .choice-btn, .cont-btn {
+            background: #1e2a1f;
+            border: 1px solid #5f8b3e;
+            padding: 0.7rem 1.6rem;
+            font-weight: 600;
+            font-size: 0.98rem;
+            border-radius: 60px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            color: #ebffcf;
+            font-family: inherit;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        .choice-btn:hover, .cont-btn:hover {
+            background: #3a5a2a;
+            transform: scale(0.97);
+            border-color: #b7e97a;
+            color: white;
+        }
+        .choice-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            transform: none;
+        }
+        .cont-btn {
+            background: #2c3e2b;
+            border-color: #9bcd6c;
+        }
+        .hidden {
+            display: none;
+        }
+
+        .extra-feedback {
+            background: #121e16;
+            border-radius: 1.2rem;
+            padding: 1rem 1.3rem;
+            margin: 1rem auto;
+            border-left: 4px solid #ffd966;
+            color: #f0f0d0;
+            font-style: italic;
+            font-size: 0.96rem;
+            line-height: 1.5;
+            max-width: 75ch;
+            text-align: left;
+        }
+
+        .theme-green-black { background: radial-gradient(ellipse at 30% 40%, #102020, #030707); }
+        .theme-purple { background: radial-gradient(ellipse at 70% 20%, #1e172f, #0b0817); }
+        .theme-yellow { background: radial-gradient(ellipse at 40% 80%, #2f2a1a, #0f0e07); }
+
+        .tape-line {
+            height: 4px;
+            background: repeating-linear-gradient(90deg, #6f9e3f, #6f9e3f 12px, #1f3a1a 12px, #1f3a1a 24px);
+            width: 100%;
+            margin: 25px 0 10px;
+            border-radius: 2px;
+        }
+
+        @media (max-width: 700px) {
+            .page { padding: 1.5rem; }
+            .glitch-title { font-size: 1.8rem; }
+            h2 { font-size: 1.6rem; }
+            .story-text { font-size: 0.98rem; max-width: 100%; }
+            .button-group { max-width: 100%; }
+        }
+        i.fa, i.far, i.fas { margin-right: 6px; }
     </style>
 </head>
 <body>
-
-<div class="archive-container">
-    <!-- 0 -->
-    <div class="page theme-green-black" id="page0">
-        <div class="eye-tape-deco"><i class="fas fa-eye"></i><i class="fas fa-tape"></i><i class="fas fa-compact-disc"></i></div>
-        <div class="glitch-title">The Meant-to-be Archives</div>
-        <div class="button-group"><button class="choice-btn" onclick="go(1)">我Cow，这啥！</button></div>
-    </div>
-
-    <!-- 1 -->
-    <div class="page hidden theme-green-black" id="page1">
-        <div class="eye-tape-deco"><i class="fas fa-eye"></i><i class="fas fa-microphone-alt"></i><i class="fas fa-reel"></i></div>
-        <div class="story-text">芒, hopefully if you hear this it means I've found a way to record those '家产99' statements you were telling me about.<br>Even a 同人女 with such an 'unusual' X癖 as 芒 needs a well-organised archive.</div>
-        <div class="button-group"><button class="choice-btn" onclick="playBgm2(); go(2)">Testment Begins</button></div>
-    </div>
-
-    <!-- 2 -->
-    <div class="page hidden theme-purple" id="page2">
-        <h2 class="glitch-title">三句话，让他为我花了八万</h2>
-        <div class="story-text"><p>是这样的，各位，我有一个朋友。注意，这个朋友真的是朋友，不是我自己。</p></div>
-        <div class="button-group">
-            <button class="choice-btn" onclick="go(21)">🔪 分，男人有钱就变坏</button>
-            <button class="choice-btn" onclick="go(22)">💖 不分，肯为你花钱是男人最好的医美</button>
-        </div>
-    </div>
-
-    <div class="page hidden theme-purple" id="page21"><div class="extra-feedback">男人有钱就变坏，有道理。</div><div class="button-group"><button class="cont-btn" onclick="go(3)">Continue →</button></div></div>
-    <div class="page hidden theme-purple" id="page22"><div class="extra-feedback">肯花钱是医美，但他这医美纯粹是往兵马俑脸上扑散粉啊！</div><div class="button-group"><button class="cont-btn" onclick="go(3)">Continue →</button></div></div>
-
-    <!-- 3 -->
-    <div class="page hidden theme-yellow" id="page3">
-        <h2 class="glitch-title">画师不需要朋友</h2>
-        <div class="story-text"><p>我真服了，怎么破画画的也能有私生饭啊。</p></div>
-        <div class="button-group">
-            <button class="choice-btn" onclick="go(31)">🚫 别管，卖课的。</button>
-            <button class="choice-btn" onclick="go(32)">⚖️ 问问吧，反正你也是未成年人，大不了魔法对轰。</button>
-        </div>
-    </div>
-    <div class="page hidden theme-yellow" id="page31"><div class="extra-feedback">本来我也以为是卖课的，结果见我的意思是他转到了我们学校。</div><div class="button-group"><button class="cont-btn" onclick="go(4)">Continue →</button></div></div>
-    <div class="page hidden theme-yellow" id="page32"><div class="extra-feedback">怎么回事啊......他居然是我们班的转校生还成了同桌。</div><div class="button-group"><button class="cont-btn" onclick="go(4)">Continue →</button></div></div>
-
-    <!-- 4 -->
-    <div class="page hidden theme-purple" id="page4">
-        <h2 class="glitch-title">申请评选室友最炸裂行为......</h2>
-        <div class="story-text"><p>室友煮意大利面睡着差点把房子炸了。</p></div>
-        <div class="button-group">
-            <button class="choice-btn" onclick="go(41)">🏚️ 退租吧。</button>
-            <button class="choice-btn" onclick="go(42)">🐕 算了，就当养了条狗。</button>
-        </div>
-    </div>
-    <div class="page hidden theme-purple" id="page41"><div class="extra-feedback">不是没想过，但我俩合租了好几年了。</div><div class="button-group"><button class="cont-btn" onclick="go(5)">Continue →</button></div></div>
-    <div class="page hidden theme-purple" id="page42"><div class="extra-feedback">养狗千日，用狗何时啊。</div><div class="button-group"><button class="cont-btn" onclick="go(5)">Continue →</button></div></div>
-
-    <!-- 5 -->
-    <div class="page hidden theme-yellow" id="page5">
-        <h2 class="glitch-title">仇人送的花好难看</h2>
-        <div class="story-text"><p>生日那天仇人送了我一束花，好难看。故意的吧。</p></div>
-        <div class="button-group">
-            <button class="choice-btn" onclick="go(51)">🤮 我草，真的难看！</button>
-            <button class="choice-btn" onclick="go(52)">🌸 咦，这花有什么含义吗？</button>
-        </div>
-    </div>
-    <div class="page hidden theme-yellow" id="page51"><div class="extra-feedback">喂，让你看了？还评价上了。</div><div class="button-group"><button class="cont-btn" onclick="go(6)">Continue →</button></div></div>
-    <div class="page hidden theme-yellow" id="page52"><div class="extra-feedback">这就不懂了吧，黄玫瑰的话语有四种。</div><div class="button-group"><button class="cont-btn" onclick="go(6)">Continue →</button></div></div>
-
-    <!-- 6 -->
-    <div class="page hidden theme-purple" id="page6">
-        <h2 class="glitch-title">寡妇门前是非多</h2>
-        <div class="story-text"><p>......一定要对着这个录音机说话吗。</p></div>
-        <div class="button-group">
-            <button class="choice-btn" onclick="go(61)">✔️ 是。</button>
-            <button class="choice-btn" onclick="go(62)">❌ 非。</button>
-        </div>
-    </div>
-    <div class="page hidden theme-purple" id="page61"><div class="extra-feedback">后悔无用，所以无须后悔，对吗......</div><div class="button-group"><button class="cont-btn" onclick="go(7)">Continue →</button></div></div>
-    <div class="page hidden theme-purple" id="page62"><div class="extra-feedback">无须后悔，毕竟后悔无用，对吗......</div><div class="button-group"><button class="cont-btn" onclick="go(7)">Continue →</button></div></div>
-
-    <!-- 7 -->
-    <div class="page hidden theme-green-black" id="page7">
-        <div class="story-text">Hello, 芒.<br>Now, shall we turn the page and try again?</div>
-        <div class="button-group"><button class="choice-btn" onclick="go(8)">📖 Turn The Page</button></div>
-    </div>
-
-    <!-- 8 -->
-    <div class="page hidden theme-yellow" id="page8">
-        <h2 class="glitch-title">海王爱鱼有错吗？</h2>
-        <div class="story-text"><p>我跟那个绿藻头在一起也不是一天两天了。</p></div>
-        <div class="button-group">
-            <button class="choice-btn" onclick="go(81)">👑 不知道，但我是lady。</button>
-            <button class="choice-btn" onclick="go(82)">🐟 子非鱼，安知鱼之爽啊！</button>
-        </div>
-    </div>
-    <div class="page hidden theme-yellow" id="page81"><div class="extra-feedback">拜拜绿藻头，你好lady！</div><div class="button-group"><button class="cont-btn" onclick="go(9)">Continue →</button></div></div>
-    <div class="page hidden theme-yellow" id="page82"><div class="extra-feedback">原来如此！原来第二次转身走了是在暗爽吗！</div><div class="button-group"><button class="cont-btn" onclick="go(9)">Continue →</button></div></div>
-
-    <!-- 9 -->
-    <div class="page hidden theme-purple" id="page9">
-        <h2 class="glitch-title">别人都想强了我，只有他想比我强</h2>
-        <div class="story-text"><p>我不知道该怎么形容这件事。</p></div>
-        <div class="button-group">
-            <button class="choice-btn" onclick="go(91)">💀 你是不是有点克夫？</button>
-            <button class="choice-btn" onclick="go(92)">👀 实不相瞒，我还是想看别人强你。</button>
-        </div>
-    </div>
-    <div class="page hidden theme-purple" id="page91"><div class="extra-feedback">......克的话我该上吊吗？</div><div class="button-group"><button class="cont-btn" onclick="go(10)">Continue →</button></div></div>
-    <div class="page hidden theme-purple" id="page92"><div class="extra-feedback">阿尔敏真不是我生的。</div><div class="button-group"><button class="cont-btn" onclick="go(10)">Continue →</button></div></div>
-
-    <!-- 10 -->
-    <div class="page hidden theme-purple" id="page10">
-        <h2 class="glitch-title">雄伟的同人女拯救了X次家产</h2>
-        <div class="story-text">第七个年头，希望你喜欢这份礼物。不喜欢也不要紧，反正你会喜欢我。</div>
-        <div class="button-group">
-            <button class="choice-btn" onclick="go(0)">✨ 当然。</button>
-            <button class="choice-btn" onclick="go(0)">💢 ......再来一次，你确定吗？</button>
-        </div>
-    </div>
+<div class="archive-container" id="appRoot">
+    <div id="pagesContainer"></div>
 </div>
 
 <script>
-    // 最简单的页面切换 —— 绝对不会失效
-    let currentPage = 0;
-    function go(num) {
-        document.getElementById(`page${currentPage}`).classList.add('hidden');
-        document.getElementById(`page${num}`).classList.remove('hidden');
-        currentPage = num;
-        if (num === 1) playBgm1(); // 第一页播 bgm1
-    }
+    (function() {
+        // ---------- 音频配置（仅播放1次，不循环）----------
+        const audio1 = new Audio('bgm1.mp3');
+        audio1.loop = false;
+        const audio2 = new Audio('bgm2.mp3');
+        audio2.loop = false;
+        
+        function playAudioOnce(audio) {
+            audio.pause();
+            audio.currentTime = 0;
+            audio.play().catch(e => console.log("音频播放提示:", e));
+        }
+        
+        // ---------- 全局状态 ----------
+        let currentPageIndex = 0;
+        const countPages = ['page3','page4','page5','page6','page9'];
+        let choiceRecord = { page3: null, page4: null, page5: null, page6: null, page9: null };
+        let pageLocked = { page3: false, page4: false, page5: false, page6: false, page7: false, page8: false, page9: false, page10: false };
+        
+        // ---------- 辅助 ----------
+        function formatStoryTexts() {
+            const containers = document.querySelectorAll('.story-text');
+            containers.forEach(container => {
+                if (container.querySelector('p')) return;
+                let html = container.innerHTML;
+                const lines = html.split(/<br\s*\/?>/i);
+                if (lines.length <= 1) return;
+                const paragraphs = lines.map(l => l.trim()).filter(l => l !== '');
+                if (paragraphs.length) {
+                    container.innerHTML = paragraphs.map(p => `<p>${p}</p>`).join('');
+                }
+            });
+        }
+        
+        // 显示页面（核心函数）
+        function showPage(pageId) {
+            document.querySelectorAll('.page').forEach(p => p.classList.add('hidden-page'));
+            let targetId = typeof pageId === 'number' ? `page${pageId}` : pageId;
+            const target = document.getElementById(targetId);
+            if (target) target.classList.remove('hidden-page');
+            currentPageIndex = pageId;
+            if (pageId === 10) updateFinalPage();
+            if (pageId === 1) playAudioOnce(audio1);
+        }
+        
+        // 绑定 Continue 按钮（修复失效问题）
+        function bindContinueButtons() {
+            const map = [
+                { btn: 'cont21', to: 3 },
+                { btn: 'cont22', to: 3 },
+                { btn: 'cont31', to: 4 },
+                { btn: 'cont32', to: 4 },
+                { btn: 'cont41', to: 5 },
+                { btn: 'cont42', to: 5 },
+                { btn: 'cont51', to: 6 },
+                { btn: 'cont52', to: 6 },
+                { btn: 'cont61', to: 7 },
+                { btn: 'cont62', to: 7 },
+                { btn: 'cont81', to: 9 },
+                { btn: 'cont82', to: 9 },
+                { btn: 'cont91', to: 10 },
+                { btn: 'cont92', to: 10 },
+            ];
+            map.forEach(item => {
+                const el = document.getElementById(item.btn);
+                if (el) el.addEventListener('click', () => showPage(item.to));
+            });
+        }
+        
+        // 分支选择
+        function setupChoice(btnsId, choice1Page, choice2Page, pageKey, textMap, isCounting = true) {
+            const btnsDiv = document.getElementById(btnsId);
+            if (!btnsDiv) return;
+            const btns = btnsDiv.querySelectorAll('.choice-btn');
+            const clickHandler = (e) => {
+                if (pageLocked[pageKey]) return;
+                const choiceVal = parseInt(e.currentTarget.getAttribute('data-choice'));
+                if (isCounting && countPages.includes(pageKey)) choiceRecord[pageKey] = (choiceVal === 2);
+                pageLocked[pageKey] = true;
+                btns.forEach(btn => btn.disabled = true);
+                const targetPage = choiceVal === 1 ? choice1Page : choice2Page;
+                showPage(targetPage);
+            };
+            btns.forEach(btn => btn.addEventListener('click', clickHandler));
+        }
+        
+        // 最终页统计
+        function updateFinalPage() {
+            const count2 = Object.values(choiceRecord).filter(val => val === true).length;
+            const total = count2 + 1;
+            const titleElem = document.getElementById('finalTitle');
+            if (titleElem) titleElem.innerHTML = `雄伟的同人女拯救了${total}次家产（如果他们还是你家产的话......不是了就让他们自生自灭吧！）`;
+        }
+        
+        // 页面 HTML
+        function getPagesHTML() {
+            return `
+            <!-- 初始页 -->
+            <div id="page0" class="page theme-green-black">
+                <div class="eye-tape-deco"><i class="fas fa-eye"></i> <i class="fas fa-tape"></i> <i class="fas fa-compact-disc"></i></div>
+                <div class="glitch-title">The<br>Meant-to-be<br>Archives</div>
+                <div class="tape-line"></div>
+                <div class="button-group"><button id="startBtn" class="choice-btn"><i class="fas fa-skull"></i> 我Cow，这啥！</button></div>
+                <div style="margin-top:20px; text-align:center; font-size:0.8rem; color:#6f8f5c;">⚡ 眼睛·磁带·回忆录</div>
+            </div>
 
-    // 音频
-    const bgm1 = new Audio('bgm1.mp3');
-    const bgm2 = new Audio('bgm2.mp3');
-    bgm1.loop = false;
-    bgm2.loop = false;
+            <!-- 页面1 -->
+            <div id="page1" class="page theme-green-black hidden-page">
+                <div class="eye-tape-deco"><i class="fas fa-eye"></i> <i class="fas fa-microphone-alt"></i> <i class="fas fa-reel"></i></div>
+                <div class="story-text">芒, hopefully if you hear this it means I've found a way to record those '家产99' statements you were telling me about.<br>Even a 同人女 with such an 'unusual' X癖 as 芒 needs a well-organised archive.<br>As you know, I've been going through trying to digitise and record audio versions but I've been having trouble with a few of the more... bizarre statements.<br>There have been sufficient OOC as to make them utterly unintelligible.</div>
+                <div class="button-group"><button id="testmentBtn" class="choice-btn"><i class="fas fa-scroll"></i> Testment Begins</button></div>
+                <div class="tape-line"></div>
+            </div>
 
-    function playBgm1() { bgm1.pause(); bgm1.currentTime = 0; bgm1.play().catch(()=>{}); }
-    function playBgm2() { bgm2.pause(); bgm2.currentTime = 0; bgm2.play().catch(()=>{}); }
+            <!-- 页面2 -->
+            <div id="page2" class="page theme-purple hidden-page">
+                <h2 class="glitch-title" style="font-size:1.8rem;">三句话，让他为我花了八万</h2>
+                <div class="story-text">是这样的，各位，我有一个朋友。注意，这个朋友真的是朋友，不是我自己。<br>我的朋友呢，和我一起，准备攒一个大活。至少我们是这么准备的啊。于是费了一个大劲，花了一个大钱，最后丢了一个大脸。<br>花了多大的钱呢，我朋友花了整整八万。整整八万。三句话，让朋友为我花了八万。哎那谁！我想攒个活。你有啥想法不？对方说ok啊我来给你出八万。一共三句。学着点啊，朋友们，都是生活的经验。<br>总而言之呢，这个结果呢，和我们想象的有一丢丢不一样，一丢丢。具体是多少呢，用一个数学比例来说，就是5000分之300的不一样，300除以5000是6%啊，百分之六的不一样，哎怎么又是六。看上去还可以是吧，但是呢稍微了解我一点的人都知道，我是一个不容易满足的人，我的朋友好像是一个容易满意、但也没被满足太多的人。<br>面对那个结果的时候，我有一万句话想说。不用暖心，不是什么好话啊。一万句里面起码有一半是纯粹的情绪宣泄，诸如nmsl。这些宣泄的话我对自己说了一千句以后受不了了，我转念一想，这活好歹是我俩一起攒的，有福同享有难同当，所以我对自己说一句，就该对他也说一句吧？但一想到那八万块钱，各位，我就只能劝说自己筑起文明的高墙，给他来一段内蒙solo。<br>没有啊，最后没有内蒙solo。至少我没有对他单向输出，我俩双向solo，那就不是solo。但每次会想起那次经历，在我尴尬得抓狂，经受社死的二次折磨，无比痛苦同时，我还要进行另外一种内耗。我在辗转反侧一件事的时候，同时辗转反侧另外一件事。什么事呢，他到底是真心觉得这个活好，还是只是习惯性地点头。你们不知道，他就是一个不太懂偏爱与排外，永远"yes，and"的人。或者说我经常会想，他到底是真心觉得我好，还是只是习惯性地对所有人点头。</div>
+                <div class="button-group" id="pg3-btns">
+                    <button data-choice="1" class="choice-btn">🔪 分，男人有钱就变坏</button>
+                    <button data-choice="2" class="choice-btn">💖 不分，肯为你花钱是男人最好的医美</button>
+                </div>
+            </div>
+
+            <!-- 页面21 -->
+            <div id="page21" class="page theme-purple hidden-page">
+                <h2 class="glitch-title" style="font-size:1.8rem;">三句话，让他为我花了八万 · 选择反馈</h2>
+                <div class="extra-feedback">男人有钱就变坏，有道理。<br>但这不没钱了吗？人八万都花走了！再接下来要在米未食堂翻跟斗卖艺才有钱吃饭了！</div>
+                <div class="button-group"><button id="cont21" class="cont-btn">Continue →</button></div>
+            </div>
+            <!-- 页面22 -->
+            <div id="page22" class="page theme-purple hidden-page">
+                <h2 class="glitch-title" style="font-size:1.8rem;">三句话，让他为我花了八万 · 选择反馈</h2>
+                <div class="extra-feedback">肯花钱是医美，但他这医美纯粹是往兵马俑脸上扑散粉啊！<br>不过我们后来也聊了，我也想明白了，开车的时候想明白的，一些小哲思，分享给大家。<br>有些朋友就是这样的，他不会想太多，他只是觉得和你一起攒活很好，攒好了很好，攒砸了也很好。</div>
+                <div class="button-group"><button id="cont22" class="cont-btn">Continue →</button></div>
+            </div>
+
+            <!-- 页面3 -->
+            <div id="page3" class="page theme-yellow hidden-page">
+                <h2 class="glitch-title" style="font-size:1.8rem;">画师不需要朋友</h2>
+                <div class="story-text">我真服了，怎么破画画的也能有私生饭啊。<br>上次画爽了用小号发了个帖子，结果有个陌生的账号一直轰炸我评论区，我不回复就轰炸私信，甚至不知道怎么做到的，一直追到了我的现生大号！我问他要干什么，他居然说你画得好好看啊，能不能交个画友。<br>神经病吧！说了多少遍了，画师不需要朋友！觉得我画得好看可以跟我约稿啊，我不是开了橱窗吗。家里管零花钱管得太严了，正想赚点外快呢。<br>但他也不约稿，这穷鬼。就天天黏着我，我发画就评论基本功好厉害，我发风景照又评论银杏树好漂亮，巨无敌烦。你要抄袭画风就抄呗，一直阴魂不散地缠着我让我教教教是什么意思......而且我原生家庭真的很差，不支持我干这行，万一被发现了可不是闹着玩的，他这不给我惹祸吗！<br>前天他特别兴奋地说过几天来见我，还给我带了礼物。喂，我怎么可能给他我家的地址！！！结果他说不需要。什么意思啊，把我家庭地址都扒出来了吗，我才不信！<br>算了，不管他怎么找来的，要是他敢跟我家里人打小报告，我绝对会给他点颜色看看的，绝对！</div>
+                <div class="button-group" id="pg4-btns">
+                    <button data-choice="1" class="choice-btn">🚫 别管，卖课的。</button>
+                    <button data-choice="2" class="choice-btn">⚖️ 问问吧，反正你也是未成年人，大不了魔法对轰。</button>
+                </div>
+            </div>
+            <!-- 页面31 -->
+            <div id="page31" class="page theme-yellow hidden-page">
+                <h2 class="glitch-title" style="font-size:1.8rem;">画师不需要朋友 · 选择反馈</h2>
+                <div class="extra-feedback">本来我也以为是卖课的，结果见我的意思是他转到了我们学校，现在成我同桌了。<br>他说真的想让我教他画画，愿意给我课时费，原来不是卖课是买课啊......<br>不管了，有钱不赚王八蛋！</div>
+                <div class="button-group"><button id="cont31" class="cont-btn">Continue →</button></div>
+            </div>
+            <!-- 页面32 -->
+            <div id="page32" class="page theme-yellow hidden-page">
+                <h2 class="glitch-title" style="font-size:1.8rem;">画师不需要朋友 · 选择反馈</h2>
+                <div class="extra-feedback">怎么回事啊......他居然是我们班的转校生......还和我成了同桌......<br>不过人还可以，勉勉强强吧。经常借我看漫画书，上次我在音乐课上画画差点被老师发现，他还替我打掩护来着。<br>我不想欠人情，就教他画画了。有点笨，不过有人一起画画感觉还挺好的。他还喜欢吃橘子的，正好，学校每周五中午发的橘子也就那样了，给他吧。</div>
+                <div class="button-group"><button id="cont32" class="cont-btn">Continue →</button></div>
+            </div>
+
+            <!-- 页面4 -->
+            <div id="page4" class="page theme-purple hidden-page">
+                <h2 class="glitch-title">申请评选室友最炸裂行为......</h2>
+                <div class="story-text">室友煮意大利面睡着差点把房子炸了。<br>事情的经过是这样的。我室友，对，就是那个餐前不洗手，出门不关灯，还总是乱改房间布局，说了好几次他才长记性的室友。前天晚上他说要给我露一手，煮意大利面。也不知道意大利面有什么值得露一手的......我当时忙了一天打算补个觉，没空搭理他，就说行你煮吧。<br>然后我睡着睡着就闻到了烟味。甚至不是糊味，不是那种还局限于厨房事故的糊味。我推开卧室门的时候，外面的烟已经浓得像有一百个歌剧魅影的水晶吊灯在公寓里争相爆炸。而我亲爱的可爱的敬爱的室友趴在沙发上，如同婴儿在母亲的怀抱里一样酣眠。<br>我立刻报了火警。把他往屋外拖的时候，我的心情，怎么说呢，就是我挺想削点什么的，而一旁的茶几上正好有把水果刀。拖到一半的时候他醒了，迷迷糊糊地抬头看我。此人第一句话不是"我草怎么着火了"，不是"谢谢你救我狗命"，也不是"对不起我又闯祸了"。<br>他居然说，我的面呢。<br>你的面呢？你的面在火化。你也差点要火化了。我是真有点后悔没拿水果刀削他两下然后踹火海里毁尸灭迹了。</div>
+                <div class="button-group" id="pg5-btns">
+                    <button data-choice="1" class="choice-btn">🏚️ 退租吧。</button>
+                    <button data-choice="2" class="choice-btn">🐕 算了，就当养了条狗。</button>
+                </div>
+            </div>
+            <!-- 页面41 -->
+            <div id="page41" class="page theme-purple hidden-page">
+                <h2 class="glitch-title">申请评选室友最炸裂行为 · 选择反馈</h2>
+                <div class="extra-feedback">不是没想过，但我俩合租了好几年了，小时候也是一起长大的，要说谁最了解我的生活习惯，一定是他。不是说我喜欢挨着火灾现场睡觉的意思。再找一个室友还得从头调教，太麻烦了，我可没有那么多时间训狗。</div>
+                <div class="button-group"><button id="cont41" class="cont-btn">Continue →</button></div>
+            </div>
+            <!-- 页面42 -->
+            <div id="page42" class="page theme-purple hidden-page">
+                <h2 class="glitch-title">申请评选室友最炸裂行为 · 选择反馈</h2>
+                <div class="extra-feedback">养狗千日，用狗何时啊。不过平时蠢了吧唧的，但我要他陪我排练的时候，他还是挺认真的。熬到大半夜的时候，还有人也亮着灯；白忙活一场的时候，还有人陪你从头来过；所有人觉得你疯了的时候，还有人说Doris简直是天才......算了算了，凑合过吧，还能离咋的。评选最炸裂室友行为，我投自己一票行了吧......居然还没搬走。</div>
+                <div class="button-group"><button id="cont42" class="cont-btn">Continue →</button></div>
+            </div>
+
+            <!-- 页面5 -->
+            <div id="page5" class="page theme-yellow hidden-page">
+                <h2 class="glitch-title">仇人送的花好难看</h2>
+                <div class="story-text">生日那天仇人送了我一束花，好难看。故意的吧。<br>我跟他之间的关系，说是仇人那都算客气了。垃圾桶里捡来的小崽子，居然还敢对人爱答不理的。我以前也不是没有对他伸出过橄榄枝，结果他倒是一副趾高气扬的样子，不就是看上我家族显赫吗，一个攀炎附势的东西，装什么清高！<br>从小到大他倒是运气好得很，会讨父亲欢心，什么事还都压我一头，凭什么！这次送花也是，不就是想故意让父亲看到，以为我软弱吗！现在父亲又冷落我了，他又一副护着我、替我说好话的样子，凭什么！最重要的是，他凭什么送我花，他有什么资格送我花，他在以什么身份送我花！我根本不好奇他对我的感情，我只觉得，他怎么能、怎么敢送我......这么丑的花！！！你们别问我为什么不去直接问他。问就是不想。谁稀罕知道他什么意思啊。<br>而且我根本不喜欢花，我是冷血的......你们不用知道我是谁，反正我冷血无情残暴极端，我怎么会喜欢花......<br>真是越想越气，你们自己看看这花丑不丑。果然，身份低贱的人能有什么高贵的品味啊。</div>
+                <div class="button-group" id="pg6-btns">
+                    <button data-choice="1" class="choice-btn">🤮 我草，真的难看！</button>
+                    <button data-choice="2" class="choice-btn">🌸 咦，这花有什么含义吗？</button>
+                </div>
+            </div>
+            <!-- 页面51 -->
+            <div id="page51" class="page theme-yellow hidden-page">
+                <h2 class="glitch-title">仇人送的花好难看 · 选择反馈</h2>
+                <div class="extra-feedback">喂，让你看了？还评价上了。</div>
+                <div class="button-group"><button id="cont51" class="cont-btn">Continue →</button></div>
+            </div>
+            <!-- 页面52 -->
+            <div id="page52" class="page theme-yellow hidden-page">
+                <h2 class="glitch-title">仇人送的花好难看 · 选择反馈</h2>
+                <div class="extra-feedback">这就不懂了吧，黄玫瑰的话语有四种，友谊嫉妒离别和爱，我真想不明白哪个词和我俩沾边！<br>友谊，哼，我俩从来就不是朋友。<br>嫉妒，他又自以为谁又嫉妒他了！<br>离别不就是在赶我走吗，真是想鸠占鹊巢想疯了。<br>爱，爱......我跟你说得着吗！</div>
+                <div class="button-group"><button id="cont52" class="cont-btn">Continue →</button></div>
+            </div>
+
+            <!-- 页面6 -->
+            <div id="page6" class="page theme-purple hidden-page">
+                <h2 class="glitch-title">寡妇门前是非多</h2>
+                <div class="story-text">......一定要对着这个录音机说话吗。还有，谁给我取的标题......是非指是非题，哦，很幽默。<br>你们都知道是哪道是非题，不用我再说一遍。来来回回地思考一件事，最终得出一个答案，这通常不是我的工作，我也并不在行。他把这道二选一甩给了我，这混蛋，他倒是轻松了。我说了我不在行，所以我也很少思考，无悔的选择，就是正确的选择吗。<br>那我就甩给你们。你们来告诉我吧。</div>
+                <div class="button-group" id="pg7-btns">
+                    <button data-choice="1" class="choice-btn">✔️ 是。</button>
+                    <button data-choice="2" class="choice-btn">❌ 非。</button>
+                </div>
+            </div>
+            <!-- 页面61 -->
+            <div id="page61" class="page theme-purple hidden-page">
+                <h2 class="glitch-title">寡妇门前是非多 · 选择反馈</h2>
+                <div class="extra-feedback">后悔无用，所以无须后悔，对吗......<br>没错，我知道他需要自由，更多更远的自由，迟早会冲破这个世间的自由。</div>
+                <div class="button-group"><button id="cont61" class="cont-btn">Continue →</button></div>
+            </div>
+            <!-- 页面62 -->
+            <div id="page62" class="page theme-purple hidden-page">
+                <h2 class="glitch-title">寡妇门前是非多 · 选择反馈</h2>
+                <div class="extra-feedback">无须后悔，毕竟后悔无用，对吗......<br>的确，我将永远活在他的死亡之下，大概吧。但我本就不是需要自由的人。</div>
+                <div class="button-group"><button id="cont62" class="cont-btn">Continue →</button></div>
+            </div>
+
+            <!-- 页面7 -->
+            <div id="page7" class="page theme-green-black hidden-page">
+                <div class="eye-tape-deco"><i class="fas fa-ghost"></i> <i class="fas fa-head-side-vr"></i></div>
+                <div class="story-text">Hello, 芒.<br>Apologies for the OOC, but I wanted to make sure you started reading, so I thought it best not to announce myself<br>I'm assuming you're alone, you always did prefer to read your statements in private. I wouldn't try too hard to read; there's every likelihood I'll just hurt your impression of your家产.So just listen.<br>Now, shall we turn the page and try again?</div>
+                <div class="button-group"><button id="turnPageBtn" class="choice-btn">📖 Turn The Page</button></div>
+            </div>
+
+            <!-- 页面8 -->
+            <div id="page8" class="page theme-yellow hidden-page">
+                <h2 class="glitch-title">海王爱鱼有错吗？</h2>
+                <div class="story-text">我跟那个绿藻头在一起也不是一天两天了。昨天晚上在甲板上吹风，我心情好，跟他唠嗑。<br>我说，你知道我特别喜欢鱼吧？各种鱼我都爱，金枪鱼、三文鱼、比目鱼、秋刀鱼......你在我眼里就跟一条鱼似的。<br>他本来闭着眼靠在那儿，一听这话睁开一只眼。你说啥。<br>我说，你是鱼啊！我是海王。海王爱鱼，天经地义。我像喜欢鱼一样喜欢你，这还不浪漫？<br>他直接站起来，黑着脸撂下一句，所以我是你养的鱼。就走了。一晚上没理我。<br>我寻思了一宿，终于想明白了这话有歧义。第二天我去找他，我说你是不是以为自己是那种被养在鱼缸里的鱼。喂食、换水、偶尔捞出来看看，高兴了逗两下，不高兴了晾着。所以觉得我把你的地位降级成宠物了，还是那种不会说话、只能在水里吐泡泡的那种宠物。<br>我说不是的，鱼多好啊！我指的是你新鲜、好看、有活力、游起来带劲、每天都要用心钻研的......结果他又快步离开了。<br>海王爱鱼有什么错，我就是表达得不太准确，至于生气这么久吗？</div>
+                <div class="button-group" id="pg9-btns">
+                    <button data-choice="1" class="choice-btn">👑 不知道，但我是lady。</button>
+                    <button data-choice="2" class="choice-btn">🐟 子非鱼，安知鱼之爽啊！</button>
+                </div>
+            </div>
+            <!-- 页面81 -->
+            <div id="page81" class="page theme-yellow hidden-page">
+                <h2 class="glitch-title">海王爱鱼有错吗？ · 选择反馈</h2>
+                <div class="extra-feedback">拜拜绿藻头，你好lady！！！～～～！！！～～～♡♡♡</div>
+                <div class="button-group"><button id="cont81" class="cont-btn">Continue →</button></div>
+            </div>
+            <!-- 页面82 -->
+            <div id="page82" class="page theme-yellow hidden-page">
+                <h2 class="glitch-title">海王爱鱼有错吗？ · 选择反馈</h2>
+                <div class="extra-feedback">原来如此！原来第二次转身走了是在暗爽吗，真是山太公钓鱼，愿者上钩！<br>害我白白担惊受怕了两天，气死我了，我早晚要报复回去！</div>
+                <div class="button-group"><button id="cont82" class="cont-btn">Continue →</button></div>
+            </div>
+
+            <!-- 页面9 -->
+            <div id="page9" class="page theme-purple hidden-page">
+                <h2 class="glitch-title">别人都想强了我，只有他想比我强</h2>
+                <div class="story-text">我不知道该怎么形容这件事。<br>全世界盼着我死的人，能从帕拉迪岛排到马莱。希望我更惨的，希望我狼狈地、用一些方式自己偿还些什么的，也大有人在。我不无辜，我知道。我没想反驳什么，或者反抗什么。<br>但波尔克不一样。他哥哥马赛尔为了保护我，被巨人咬碎了。马赛尔本可以活，他本应该继承鄂之巨人，但他为了救我死了。波尔克一直以为是我抢了他哥哥的位置，是我害死了他哥哥------某种意义上他没说错。所以他恨我，恨得要命。但他不希望我死，至少不是随随便便地死。他希望我活着，然后亲手证明他比我强，比战士，比士兵，比懦夫，比叛徒，都强。<br>后来他继承了他哥哥的鄂之巨人。他看到了马赛尔的记忆。他知道了真相。我以为他会更恨我，结果他也为了我，死了。<br>他到最后还在证明他比我强，我甚至没来得及告诉他我一直这么认为。<br>......接下来呢？我需要偿还吗？我该怎么还？我拿什么还？我不明白，什么时候才能轮到真正该死的人去死呢。</div>
+                <div class="button-group" id="pg10-btns">
+                    <button data-choice="1" class="choice-btn">💀 你是不是有点克夫？</button>
+                    <button data-choice="2" class="choice-btn">👀 实不相瞒，我还是想看别人强你。</button>
+                </div>
+            </div>
+            <!-- 页面91 -->
+            <div id="page91" class="page theme-purple hidden-page">
+                <h2 class="glitch-title">别人都想强了我，只有他想比我强 · 选择反馈</h2>
+                <div class="extra-feedback">......克的话我该上吊吗？可是我上次上吊就被他骂不要在家里荡秋千了......</div>
+                <div class="button-group"><button id="cont91" class="cont-btn">Continue →</button></div>
+            </div>
+            <!-- 页面92 -->
+            <div id="page92" class="page theme-purple hidden-page">
+                <h2 class="glitch-title">别人都想强了我，只有他想比我强 · 选择反馈</h2>
+                <div class="extra-feedback">阿尔敏真不是我生的。希斯特里亚也不是。埃尔文也不是。</div>
+                <div class="button-group"><button id="cont92" class="cont-btn">Continue →</button></div>
+            </div>
+
+            <!-- 最终页 -->
+            <div id="page10" class="page theme-purple hidden-page">
+                <h2 class="glitch-title" id="finalTitle">雄伟的同人女拯救了X次家产</h2>
+                <div class="story-text" id="finalText">没算雯莉和波莱，毕竟雯莉不用拯救，波莱......也是另一种意义上的不用拯救。<br>我Cow我真的累死了。小小文科生研究大大代码，感谢AI。<br>第七个年头，希望你喜欢这份礼物。不喜欢也不要紧，反正你会喜欢我。</div>
+                <div class="button-group">
+                    <button id="finalYesBtn" class="choice-btn">✨ 当然。</button>
+                    <button id="finalNoBtn" class="choice-btn">💢 ......再来一次，你确定吗？</button>
+                </div>
+            </div>
+            `;
+        }
+        
+        // 初始化
+        function initPages() {
+            const container = document.getElementById('pagesContainer');
+            container.innerHTML = getPagesHTML();
+            formatStoryTexts();
+            bindContinueButtons(); // 绑定所有Continue
+            
+            document.getElementById('startBtn').addEventListener('click', () => showPage(1));
+            document.getElementById('testmentBtn').addEventListener('click', () => {
+                playAudioOnce(audio2);
+                showPage(2);
+            });
+            document.getElementById('turnPageBtn').addEventListener('click', () => showPage(8));
+            
+            document.getElementById('finalYesBtn').addEventListener('click', () => {
+                showPage(0);
+                choiceRecord = { page3: null, page4: null, page5: null, page6: null, page9: null };
+                pageLocked = { page3: false, page4: false, page5: false, page6: false, page7: false, page8: false, page9: false, page10: false };
+            });
+            document.getElementById('finalNoBtn').addEventListener('click', () => {
+                showPage(0);
+                choiceRecord = { page3: null, page4: null, page5: null, page6: null, page9: null };
+                pageLocked = { page3: false, page4: false, page5: false, page6: false, page7: false, page8: false, page9: false, page10: false };
+            });
+            
+            setupChoice('pg3-btns', 'page21', 'page22', 'page2', null, false);
+            setupChoice('pg4-btns', 'page31', 'page32', 'page3', null);
+            setupChoice('pg5-btns', 'page41', 'page42', 'page4', null);
+            setupChoice('pg6-btns', 'page51', 'page52', 'page5', null);
+            setupChoice('pg7-btns', 'page61', 'page62', 'page6', null);
+            setupChoice('pg9-btns', 'page81', 'page82', 'page8', null, false);
+            setupChoice('pg10-btns', 'page91', 'page92', 'page9', null);
+        }
+        
+        window.addEventListener('DOMContentLoaded', initPages);
+    })();
 </script>
-
 </body>
 </html>
