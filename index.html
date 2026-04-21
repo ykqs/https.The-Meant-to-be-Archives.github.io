@@ -97,27 +97,6 @@
             transition: transform 0.08s linear;
         }
 
-        /* 触须装饰 */
-        .tentacle {
-            position: fixed;
-            background: linear-gradient(90deg, #003333, #006666);
-            border-radius: 50px;
-            opacity: 0.5;
-            animation: tentacleWave 12s infinite ease-in-out;
-            z-index: 0;
-            pointer-events: none;
-        }
-
-        .tentacle-1 { width: 25px; height: 400px; top: 5%; left: 2%; transform: rotate(-35deg); animation-delay: 0s; }
-        .tentacle-2 { width: 20px; height: 350px; top: 15%; right: 3%; transform: rotate(40deg); animation-delay: 2s; }
-        .tentacle-3 { width: 30px; height: 450px; bottom: 5%; left: 5%; transform: rotate(20deg); animation-delay: 4s; }
-        .tentacle-4 { width: 22px; height: 380px; bottom: 10%; right: 4%; transform: rotate(-25deg); animation-delay: 6s; }
-
-        @keyframes tentacleWave {
-            0%, 100% { transform: rotate(-35deg); opacity: 0.4; }
-            50% { transform: rotate(35deg); opacity: 0.7; }
-        }
-
         /* 装饰元素 */
         .eye-tape-deco {
             margin-bottom: 2.5rem;
@@ -145,11 +124,12 @@
             50% { transform: translateY(-10px); }
         }
 
-        /* 标题样式 - 核心优化：降低散光/增强清晰度 */
+        /* 标题样式 - 核心优化：降低散光/增强清晰度 + 缩小字号 */
         .glitch-title {
             font-family: 'Cormorant Garamond', 'JetBrains Mono', monospace;
             font-weight: 600;
-            font-size: clamp(2rem, 5vw, 3.8rem);
+            /* 缩小主标题字号：从clamp(2rem, 5vw, 3.8rem)改为clamp(1.6rem, 4vw, 2.8rem) */
+            font-size: clamp(1.6rem, 4vw, 2.8rem);
             letter-spacing: -1px;
             /* 简化渐变，降低发光强度，增强文字实体感 */
             background: linear-gradient(135deg, #00e68c, #00cccc, #00e68c);
@@ -170,10 +150,11 @@
             z-index: 2;
         }
 
-        /* 二级标题（二选一页面）- 优化清晰度 */
+        /* 二级标题（二选一页面）- 优化清晰度 + 缩小字号 */
         h2 {
             font-family: 'Cormorant Garamond', serif;
-            font-size: clamp(1.3rem, 2.8vw, 2rem);
+            /* 缩小二级标题字号：从clamp(1.3rem, 2.8vw, 2rem)改为clamp(1.1rem, 2.2vw, 1.6rem) */
+            font-size: clamp(1.1rem, 2.2vw, 1.6rem);
             font-weight: 600;
             font-style: italic;
             margin-bottom: 1.8rem;
@@ -327,8 +308,8 @@
 
         @media (max-width: 700px) {
             .page { padding: 2rem 1.5rem; }
-            .glitch-title { font-size: clamp(1.8rem, 4vw, 2.5rem); padding: 0.8rem 1.5rem; }
-            h2 { font-size: clamp(1.1rem, 2.5vw, 1.6rem); }
+            .glitch-title { font-size: clamp(1.4rem, 3.5vw, 2.2rem); padding: 0.8rem 1.5rem; }
+            h2 { font-size: clamp(0.95rem, 2vw, 1.4rem); }
             .story-text { padding: 1.5rem 1.8rem; max-width: 100%; font-size: clamp(0.95rem, 2vw, 1.05rem); }
             .button-group { max-width: 100%; gap: 1rem; }
             .choice-btn, .cont-btn { padding: 0.8rem 1.5rem; }
@@ -350,9 +331,13 @@
 
 <script>
     (function() {
-        // ---------- 模拟音频 ----------
-        const audio1 = { play: () => Promise.resolve() };
-        const audio2 = { play: () => Promise.resolve() };
+        // ---------- 音频初始化（修改为指定文件名） ----------
+        // 创建音频对象，指定实际音频文件路径
+        const bgm1 = new Audio('bgm1.mp3');
+        const bgm2 = new Audio('bgm2.mp3');
+        // 设置音频循环播放（可选，根据需求调整）
+        bgm1.loop = true;
+        bgm2.loop = true;
         
         // ---------- 全局状态 ----------
         let currentPageId = 'page0';
@@ -395,7 +380,7 @@
             });
         }
         
-        // 显示页面并添加动画类
+        // 显示页面并添加动画类 + 音频播放逻辑
         function showPage(pageId) {
             const allPages = document.querySelectorAll('.page');
             allPages.forEach(page => {
@@ -408,15 +393,21 @@
                 // 触发重绘后添加动画
                 target.offsetHeight;
                 target.style.animation = 'pageFadeIn 0.5s ease-out';
+                
+                // 页面二打开时播放bgm1
+                if (pageId === 'page2') {
+                    bgm1.play().catch(e => {
+                        console.log("BGM1播放失败（可能需要用户交互触发）:", e);
+                        // 兼容浏览器自动播放限制：提示用户点击页面后再播放
+                        alert("浏览器限制自动播放音频，请点击页面任意位置后重新操作");
+                    });
+                }
             } else {
                 console.warn('页面不存在:', pageId);
                 return;
             }
             currentPageId = pageId;
             if (pageId === 'page10') updateFinalPage();
-            if (pageId === 'page1') {
-                audio1.play().catch(e => console.log("音频播放跳过"));
-            }
         }
         
         // 分支选择处理（跳转到独立反馈页）
@@ -487,10 +478,10 @@
             });
         }
         
-        // 构建完整HTML（优化眼睛SVG视觉效果）
+        // 构建完整HTML（移除首页触须）
         function buildHTML() {
             return `
-            <!-- 首页 - 全屏眼睛 + 触须 -->
+            <!-- 首页 - 全屏眼睛（移除触须） -->
             <div id="page0" class="page theme-green-black" style="position: relative; overflow: hidden;">
                 <!-- 全屏眼睛容器 -->
                 <div class="eye-fullscreen" id="eyeContainer">
@@ -530,11 +521,6 @@
                         <ellipse cx="600" cy="400" rx="520" ry="330" fill="url(#eyeGlow)" opacity="0.5"/>
                     </svg>
                 </div>
-                <!-- 触须装饰 -->
-                <div class="tentacle tentacle-1"></div>
-                <div class="tentacle tentacle-2"></div>
-                <div class="tentacle tentacle-3"></div>
-                <div class="tentacle tentacle-4"></div>
                 
                 <!-- 前景内容 -->
                 <div class="home-foreground">
@@ -721,8 +707,16 @@
             // 绑定首页开始按钮
             document.getElementById('startBtn').addEventListener('click', () => showPage('page1'));
             
-            // 绑定page1的按钮
-            document.getElementById('testmentBtn').addEventListener('click', () => showPage('page2'));
+            // 绑定page1的Testment Begins按钮 - 点击播放bgm2并跳转到page2
+            document.getElementById('testmentBtn').addEventListener('click', () => {
+                // 播放bgm2
+                bgm2.play().catch(e => {
+                    console.log("BGM2播放失败:", e);
+                    alert("浏览器限制自动播放音频，请点击页面任意位置后重新操作");
+                });
+                // 跳转到page2
+                showPage('page2');
+            });
             
             // 初始化所有分支选择
             setupChoice('pg3-btns', 'page21', 'page22', 'page2');
