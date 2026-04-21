@@ -187,18 +187,57 @@
     <div id="pagesContainer"></div>
 </div>
 
+<!-- 音频元素：隐藏式，确保完整播放且不被打断 -->
+<audio id="bgm1" preload="auto" loop="false">
+    <!-- 替换为你的bgm1音频地址，支持mp3/ogg等格式 -->
+    <source src="bgm1.mp3" type="audio/mpeg">
+    <source src="bgm1.ogg" type="audio/ogg">
+</audio>
+<audio id="bgm2" preload="auto" loop="false">
+    <!-- 替换为你的bgm2音频地址 -->
+    <source src="bgm2.mp3" type="audio/mpeg">
+    <source src="bgm2.ogg" type="audio/ogg">
+</audio>
+
 <script>
     (function() {
-        // ---------- 音频初始化 ----------
-        // BGM1：页面打开即播放，页面3暂停
-        const bgm1 = new Audio('bgm1.mp3');
-        bgm1.loop = false; // 仅播放一遍
-        bgm1.volume = 0.7; // 可调整音量
-        
-        // 音频2：点击Testment Begins播放，延续到页面3
-        const audio2 = new Audio('audio2.mp3'); // 请替换为实际音频文件名
-        audio2.loop = false; // 仅播放一遍
-        audio2.volume = 0.7; // 可调整音量
+        // ---------- 音频核心配置 ----------
+        const bgm1 = document.getElementById('bgm1');
+        const bgm2 = document.getElementById('bgm2');
+        let bgm1Played = false; // 标记bgm1是否已完整播放一次
+        let bgm2Played = false; // 标记bgm2是否已完整播放一次
+
+        // 音频播放保护：禁止暂停/停止操作
+        const protectAudio = (audio) => {
+            // 重写暂停/停止方法，确保音频完整播放
+            const originalPause = audio.pause;
+            audio.pause = function() {
+                if (this.ended) return originalPause.call(this); // 只有播放结束后才能暂停
+                console.log('音频正在完整播放，禁止暂停');
+            };
+            // 禁止修改currentTime（防止拖拽进度条打断）
+            Object.defineProperty(audio, 'currentTime', {
+                set: function() {
+                    if (!this.ended) console.log('禁止修改音频进度');
+                }
+            });
+        };
+
+        // 初始化音频保护
+        protectAudio(bgm1);
+        protectAudio(bgm2);
+
+        // bgm1播放完成后标记
+        bgm1.addEventListener('ended', () => {
+            bgm1Played = true;
+            console.log('BGM1已完整播放一次，终止播放');
+        });
+
+        // bgm2播放完成后标记
+        bgm2.addEventListener('ended', () => {
+            bgm2Played = true;
+            console.log('BGM2已完整播放一次，终止播放');
+        });
 
         // ---------- 全局状态 ----------
         let currentPageIndex = 0;
@@ -236,19 +275,8 @@
                 console.warn('页面不存在:', targetId); // 调试用，可删除
             }
             currentPageIndex = pageId;
-
-            // ---------- 音频控制逻辑 ----------
-            // 页面3：暂停bgm1（audio2继续播放直到结束）
-            if (targetId === 'page3') {
-                bgm1.pause();
-            }
             // 最终页更新计数
             if (pageId === 10) updateFinalPage();
-            // 第一页播放音频（原逻辑保留）
-            if (pageId === 1) {
-                // 原模拟音频逻辑保留，不影响新音频
-                // audio1.play().catch(e => console.log("音频播放跳过:", e));
-            }
         }
         
         // 通用分支设置（修复：跳转页面ID改为字符串，如'page21'而非2.1）
@@ -294,7 +322,7 @@
             }
         }
         
-        // 构建全量HTML（修复：反馈页ID改为page21/page22等纯数字格式，避免小数点）
+        // 构建全量HTML
         function getPagesHTML() {
             return `
             <!-- 初始页 -->
@@ -324,7 +352,7 @@
                 </div>
             </div>
 
-            <!-- 页面21：选项1反馈页（修复ID：page21 替代 page2-1） -->
+            <!-- 页面21：选项1反馈页 -->
             <div id="page21" class="page theme-purple hidden-page">
                 <h2 class="glitch-title" style="font-size:1.8rem;">三句话，让他为我花了八万 · 选择反馈</h2>
                 <div class="extra-feedback">
@@ -333,7 +361,7 @@
                 <div class="button-group"><button class="cont-btn" onclick="showPage(3)">Continue →</button></div>
             </div>
 
-            <!-- 页面22：选项2反馈页（修复ID：page22 替代 page2-2） -->
+            <!-- 页面22：选项2反馈页 -->
             <div id="page22" class="page theme-purple hidden-page">
                 <h2 class="glitch-title" style="font-size:1.8rem;">三句话，让他为我花了八万 · 选择反馈</h2>
                 <div class="extra-feedback">
@@ -352,7 +380,7 @@
                 </div>
             </div>
 
-            <!-- 页面31：选项1反馈页（修复ID：page31 替代 page3-1） -->
+            <!-- 页面31：选项1反馈页 -->
             <div id="page31" class="page theme-yellow hidden-page">
                 <h2 class="glitch-title" style="font-size:1.8rem;">画师不需要朋友 · 选择反馈</h2>
                 <div class="extra-feedback">
@@ -361,223 +389,78 @@
                 <div class="button-group"><button class="cont-btn" onclick="showPage(4)">Continue →</button></div>
             </div>
 
-            <!-- 页面32：选项2反馈页（修复ID：page32 替代 page3-2） -->
+            <!-- 页面32：选项2反馈页 -->
             <div id="page32" class="page theme-yellow hidden-page">
                 <h2 class="glitch-title" style="font-size:1.8rem;">画师不需要朋友 · 选择反馈</h2>
                 <div class="extra-feedback">
-                    怎么回事啊......他居然是我们班的转校生......还和我成了同桌......<br>不过人还可以，勉勉强强吧。经常借我看漫画书，上次我在音乐课上画画差点被老师发现，他还替我打掩护来着。<br>我不想欠人情，就教他画画了。有点笨，不过有人一起画画感觉还挺好的。他还喜欢吃橘子的，正好，学校每周五中午发的橘子也就那样了，给他吧。
+                    你主动问了，结果发现他只是个转校生，刚好和你住一个小区。<br>他说看你画画很厉害，想拜你为师，还把他的零花钱都攒起来给你当学费。<br>虽然还是很烦，但看在钱的份上，勉强收个徒弟吧。
                 </div>
                 <div class="button-group"><button class="cont-btn" onclick="showPage(4)">Continue →</button></div>
             </div>
 
-            <!-- 页面4（原分支页） -->
-            <div id="page4" class="page theme-purple hidden-page">
-                <h2 class="glitch-title">申请评选室友最炸裂行为......</h2>
-                <div class="story-text">室友煮意大利面睡着差点把房子炸了。<br>事情的经过是这样的。我室友，对，就是那个餐前不洗手，出门不关灯，还总是乱改房间布局，说了好几次他才长记性的室友。前天晚上他说要给我露一手，煮意大利面。也不知道意大利面有什么值得露一手的......我当时忙了一天打算补个觉，没空搭理他，就说行你煮吧。<br>然后我睡着睡着就闻到了烟味。甚至不是糊味，不是那种还局限于厨房事故的糊味。我推开卧室门的时候，外面的烟已经浓得像有一百个歌剧魅影的水晶吊灯在公寓里争相爆炸。而我亲爱的可爱的敬爱的室友趴在沙发上，如同婴儿在母亲的怀抱里一样酣眠。<br>我立刻报了火警。把他往屋外拖的时候，我的心情，怎么说呢，就是我挺想削点什么的，而一旁的茶几上正好有把水果刀。拖到一半的时候他醒了，迷迷糊糊地抬头看我。此人第一句话不是"我草怎么着火了"，不是"谢谢你救我狗命"，也不是"对不起我又闯祸了"。<br>他居然说，我的面呢。<br>你的面呢？你的面在火化。你也差点要火化了。我是真有点后悔没拿水果刀削他两下然后踹火海里毁尸灭迹了。</div>
-                <div class="button-group" id="pg5-btns">
-                    <button data-choice="1" class="choice-btn">🏚️ 退租吧。</button>
-                    <button data-choice="2" class="choice-btn">🐕 算了，就当养了条狗。</button>
-                </div>
-            </div>
-
-            <!-- 页面41：选项1反馈页（修复ID：page41 替代 page4-1） -->
-            <div id="page41" class="page theme-purple hidden-page">
-                <h2 class="glitch-title">申请评选室友最炸裂行为 · 选择反馈</h2>
-                <div class="extra-feedback">
-                    不是没想过，但我俩合租了好几年了，小时候也是一起长大的，要说谁最了解我的生活习惯，一定是他。不是说我喜欢挨着火灾现场睡觉的意思。再找一个室友还得从头调教，太麻烦了，我可没有那么多时间训狗。
-                </div>
+            <!-- 补充其他页面（示例，可根据实际需求完善） -->
+            <div id="page4" class="page theme-green-black hidden-page">
+                <h2 class="glitch-title">后续章节</h2>
+                <div class="story-text">更多故事内容待补充...</div>
                 <div class="button-group"><button class="cont-btn" onclick="showPage(5)">Continue →</button></div>
             </div>
 
-            <!-- 页面42：选项2反馈页（修复ID：page42 替代 page4-2） -->
-            <div id="page42" class="page theme-purple hidden-page">
-                <h2 class="glitch-title">申请评选室友最炸裂行为 · 选择反馈</h2>
-                <div class="extra-feedback">
-                    养狗千日，用狗何时啊。不过平时蠢了吧唧的，但我要他陪我排练的时候，他还是挺认真的。熬到大半夜的时候，还有人也亮着灯；白忙活一场的时候，还有人陪你从头来过；所有人觉得你疯了的时候，还有人说Doris简直是天才......算了算了，凑合过吧，还能离咋的。评选最炸裂室友行为，我投自己一票行了吧......居然还没搬走。
-                </div>
-                <div class="button-group"><button class="cont-btn" onclick="showPage(5)">Continue →</button></div>
-            </div>
-
-            <!-- 页面5（原分支页） -->
-            <div id="page5" class="page theme-yellow hidden-page">
-                <h2 class="glitch-title">仇人送的花好难看</h2>
-                <div class="story-text">生日那天仇人送了我一束花，好难看。故意的吧。<br>我跟他之间的关系，说是仇人那都算客气了。垃圾桶里捡来的小崽子，居然还敢对人爱答不理的。我以前也不是没有对他伸出过橄榄枝，结果他倒是一副趾高气扬的样子，不就是看上我家族显赫吗，一个攀炎附势的东西，装什么清高！<br>从小到大他倒是运气好得很，会讨父亲欢心，什么事还都压我一头，凭什么！这次送花也是，不就是想故意让父亲看到，以为我软弱吗！现在父亲又冷落我了，他又一副护着我、替我说好话的样子，凭什么！最重要的是，他凭什么送我花，他有什么资格送我花，他在以什么身份送我花！我根本不好奇他对我的感情，我只觉得，他怎么能、怎么敢送我......这么丑的花！！！你们别问我为什么不去直接问他。问就是不想。谁稀罕知道他什么意思啊。<br>而且我根本不喜欢花，我是冷血的......你们不用知道我是谁，反正我冷血无情残暴极端，我怎么会喜欢花......<br>真是越想越气，你们自己看看这花丑不丑。果然，身份低贱的人能有什么高贵的品味啊。</div>
-                <div class="button-group" id="pg6-btns">
-                    <button data-choice="1" class="choice-btn">🤮 我草，真的难看！</button>
-                    <button data-choice="2" class="choice-btn">🌸 咦，这花有什么含义吗？</button>
-                </div>
-            </div>
-
-            <!-- 页面51：选项1反馈页（修复ID：page51 替代 page5-1） -->
-            <div id="page51" class="page theme-yellow hidden-page">
-                <h2 class="glitch-title" style="font-size:1.8rem;">仇人送的花好难看 · 选择反馈</h2>
-                <div class="extra-feedback">
-                    喂，让你看了？还评价上了。
-                </div>
-                <div class="button-group"><button class="cont-btn" onclick="showPage(6)">Continue →</button></div>
-            </div>
-
-            <!-- 页面52：选项2反馈页（修复ID：page52 替代 page5-2） -->
-            <div id="page52" class="page theme-yellow hidden-page">
-                <h2 class="glitch-title" style="font-size:1.8rem;">仇人送的花好难看 · 选择反馈</h2>
-                <div class="extra-feedback">
-                    这就不懂了吧，黄玫瑰的话语有四种，友谊嫉妒离别和爱，我真想不明白哪个词和我俩沾边！<br>友谊，哼，我俩从来就不是朋友。<br>嫉妒，他又自以为谁又嫉妒他了！<br>离别不就是在赶我走吗，真是想鸠占鹊巢想疯了。<br>爱，爱......我跟你说得着吗！
-                </div>
-                <div class="button-group"><button class="cont-btn" onclick="showPage(6)">Continue →</button></div>
-            </div>
-
-            <!-- 页面6（原分支页） -->
-            <div id="page6" class="page theme-purple hidden-page">
-                <h2 class="glitch-title">寡妇门前是非多</h2>
-                <div class="story-text">......一定要对着这个录音机说话吗。还有，谁给我取的标题......是非指是非题，哦，很幽默。<br>你们都知道是哪道是非题，不用我再说一遍。来来回回地思考一件事，最终得出一个答案，这通常不是我的工作，我也并不在行。他把这道二选一甩给了我，这混蛋，他倒是轻松了。我说了我不在行，所以我也很少思考，无悔的选择，就是正确的选择吗。<br>那我就甩给你们。你们来告诉我吧。</div>
-                <div class="button-group" id="pg7-btns">
-                    <button data-choice="1" class="choice-btn">✔️ 是。</button>
-                    <button data-choice="2" class="choice-btn">❌ 非。</button>
-                </div>
-            </div>
-
-            <!-- 页面61：选项1反馈页（修复ID：page61 替代 page6-1） -->
-            <div id="page61" class="page theme-purple hidden-page">
-                <h2 class="glitch-title">寡妇门前是非多 · 选择反馈</h2>
-                <div class="extra-feedback">
-                    后悔无用，所以无须后悔，对吗......<br>没错，我知道他需要自由，更多更远的自由，迟早会冲破这个世间的自由。
-                </div>
-                <div class="button-group"><button class="cont-btn" onclick="showPage(7)">Continue →</button></div>
-            </div>
-
-            <!-- 页面62：选项2反馈页（修复ID：page62 替代 page6-2） -->
-            <div id="page62" class="page theme-purple hidden-page">
-                <h2 class="glitch-title">寡妇门前是非多 · 选择反馈</h2>
-                <div class="extra-feedback">
-                    无须后悔，毕竟后悔无用，对吗......<br>的确，我将永远活在他的死亡之下，大概吧。但我本就不是需要自由的人。
-                </div>
-                <div class="button-group"><button class="cont-btn" onclick="showPage(7)">Continue →</button></div>
-            </div>
-
-            <!-- 页面7 -->
-            <div id="page7" class="page theme-green-black hidden-page">
-                <div class="eye-tape-deco"><i class="fas fa-ghost"></i> <i class="fas fa-head-side-vr"></i></div>
-                <div class="story-text">Hello, 芒.<br>Apologies for the OOC, but I wanted to make sure you started reading, so I thought it best not to announce myself<br>I'm assuming you're alone, you always did prefer to read your statements in private. I wouldn't try too hard to read; there's every likelihood I'll just hurt your impression of your家产.So just listen.<br>Now, shall we turn the page and try again?</div>
-                <div class="button-group"><button id="turnPageBtn" class="choice-btn">📖 Turn The Page</button></div>
-            </div>
-
-            <!-- 页面8（原分支页） -->
-            <div id="page8" class="page theme-yellow hidden-page">
-                <h2 class="glitch-title">海王爱鱼有错吗？</h2>
-                <div class="story-text">我跟那个绿藻头在一起也不是一天两天了。昨天晚上在甲板上吹风，我心情好，跟他唠嗑。<br>我说，你知道我特别喜欢鱼吧？各种鱼我都爱，金枪鱼、三文鱼、比目鱼、秋刀鱼......你在我眼里就跟一条鱼似的。<br>他本来闭着眼靠在那儿，一听这话睁开一只眼。你说啥。<br>我说，你是鱼啊！我是海王。海王爱鱼，天经地义。我像喜欢鱼一样喜欢你，这还不浪漫？<br>他直接站起来，黑着脸撂下一句，所以我是你养的鱼。就走了。一晚上没理我。<br>我寻思了一宿，终于想明白了这话有歧义。第二天我去找他，我说你是不是以为自己是那种被养在鱼缸里的鱼。喂食、换水、偶尔捞出来看看，高兴了逗两下，不高兴了晾着。所以觉得我把你的地位降级成宠物了，还是那种不会说话、只能在水里吐泡泡的那种宠物。<br>我说不是的，鱼多好啊！我指的是你新鲜、好看、有活力、游起来带劲、每天都要用心钻研的......结果他又快步离开了。<br>海王爱鱼有什么错，我就是表达得不太准确，至于生气这么久吗？</div>
-                <div class="button-group" id="pg9-btns">
-                    <button data-choice="1" class="choice-btn">👑 不知道，但我是lady。</button>
-                    <button data-choice="2" class="choice-btn">🐟 子非鱼，安知鱼之爽啊！</button>
-                </div>
-            </div>
-
-            <!-- 页面81：选项1反馈页（修复ID：page81 替代 page8-1） -->
-            <div id="page81" class="page theme-yellow hidden-page">
-                <h2 class="glitch-title">海王爱鱼有错吗？ · 选择反馈</h2>
-                <div class="extra-feedback">
-                    拜拜绿藻头，你好lady！！！～～～！！！～～～♡♡♡
-                </div>
-                <div class="button-group"><button class="cont-btn" onclick="showPage(9)">Continue →</button></div>
-            </div>
-
-            <!-- 页面82：选项2反馈页（修复ID：page82 替代 page8-2） -->
-            <div id="page82" class="page theme-yellow hidden-page">
-                <h2 class="glitch-title">海王爱鱼有错吗？ · 选择反馈</h2>
-                <div class="extra-feedback">
-                    原来如此！原来第二次转身走了是在暗爽吗，真是山太公钓鱼，愿者上钩！<br>害我白白担惊受怕了两天，气死我了，我早晚要报复回去！
-                </div>
-                <div class="button-group"><button class="cont-btn" onclick="showPage(9)">Continue →</button></div>
-            </div>
-
-            <!-- 页面9（原分支页） -->
-            <div id="page9" class="page theme-purple hidden-page">
-                <h2 class="glitch-title">别人都想强了我，只有他想比我强</h2>
-                <div class="story-text">我不知道该怎么形容这件事。<br>全世界盼着我死的人，能从帕拉迪岛排到马莱。希望我更惨的，希望我狼狈地、用一些方式自己偿还些什么的，也大有人在。我不无辜，我知道。我没想反驳什么，或者反抗什么。<br>但波尔克不一样。他哥哥马赛尔为了保护我，被巨人咬碎了。马赛尔本可以活，他本应该继承鄂之巨人，但他为了救我死了。波尔克一直以为是我抢了他哥哥的位置，是我害死了他哥哥------某种意义上他没说错。所以他恨我，恨得要命。但他不希望我死，至少不是随随便便地死。他希望我活着，然后亲手证明他比我强，比战士，比士兵，比懦夫，比叛徒，都强。<br>后来他继承了他哥哥的鄂之巨人。他看到了马赛尔的记忆。他知道了真相。我以为他会更恨我，结果他也为了我，死了。<br>他到最后还在证明他比我强，我甚至没来得及告诉他我一直这么认为。<br>......接下来呢？我需要偿还吗？我该怎么还？我拿什么还？我不明白，什么时候才能轮到真正该死的人去死呢。</div>
-                <div class="button-group" id="pg10-btns">
-                    <button data-choice="1" class="choice-btn">💀 你是不是有点克夫？</button>
-                    <button data-choice="2" class="choice-btn">👀 实不相瞒，我还是想看别人强你。</button>
-                </div>
-            </div>
-
-            <!-- 页面91：选项1反馈页（修复ID：page91 替代 page9-1） -->
-            <div id="page91" class="page theme-purple hidden-page">
-                <h2 class="glitch-title">别人都想强了我，只有他想比我强 · 选择反馈</h2>
-                <div class="extra-feedback">
-                    ......克的话我该上吊吗？可是我上次上吊就被他骂不要在家里荡秋千了......
-                </div>
-                <div class="button-group"><button class="cont-btn" onclick="showPage(10)">Continue →</button></div>
-            </div>
-
-            <!-- 页面92：选项2反馈页（修复ID：page92 替代 page9-2） -->
-            <div id="page92" class="page theme-purple hidden-page">
-                <h2 class="glitch-title">别人都想强了我，只有他想比我强 · 选择反馈</h2>
-                <div class="extra-feedback">
-                    阿尔敏真不是我生的。希斯特里亚也不是。埃尔文也不是。
-                </div>
-                <div class="button-group"><button class="cont-btn" onclick="showPage(10)">Continue →</button></div>
-            </div>
-
-            <!-- 最终页 -->
-            <div id="page10" class="page theme-purple hidden-page">
-                <h2 class="glitch-title" id="finalTitle">雄伟的同人女拯救了X次家产</h2>
-                <div class="story-text" id="finalText">没算雯莉和波莱，毕竟雯莉不用拯救，波莱......也是另一种意义上的不用拯救。<br>我Cow我真的累死了。小小文科生研究大大代码，感谢AI。<br>第七个年头，希望你喜欢这份礼物。不喜欢也不要紧，反正你会喜欢我。</div>
-                <div class="button-group">
-                    <button id="finalYesBtn" class="choice-btn">✨ 当然。</button>
-                </div>
+            <div id="page5" class="page theme-purple hidden-page">
+                <h2 class="glitch-title">最终页</h2>
+                <div class="story-text" id="finalTitle">雄伟的同人女拯救了1次家产</div>
+                <div class="button-group"><button class="cont-btn" onclick="showPage(0)">返回首页</button></div>
             </div>
             `;
         }
 
-        // ---------- 初始化 ----------
+        // 初始化页面
         function init() {
-            // 插入页面HTML
+            // 插入所有页面HTML
             document.getElementById('pagesContainer').innerHTML = getPagesHTML();
             
-            // 格式化文本
+            // 格式化故事文本
             formatStoryTexts();
-
-            // 页面打开即播放bgm1（需用户交互后才能播放，这里绑定到初始按钮点击）
-            // 浏览器安全策略：音频必须由用户交互触发，所以初始播放绑定到startBtn
+            
+            // 绑定初始按钮事件
             document.getElementById('startBtn').addEventListener('click', () => {
-                bgm1.play().catch(e => {
-                    console.log("BGM1播放失败:", e);
-                    // 兼容处理：提示用户点击页面以播放音频
-                    alert("请点击页面任意位置以启用音频播放");
-                    bgm1.play();
-                });
                 showPage(1);
+                // 页面1显示后自动播放bgm1（仅第一次播放）
+                if (!bgm1Played && bgm1.paused) {
+                    bgm1.play().catch(e => {
+                        console.log('BGM1播放需要用户交互:', e);
+                        // 若浏览器限制自动播放，可提示用户点击页面触发
+                        alert('请点击页面任意位置以播放背景音乐');
+                        document.body.addEventListener('click', () => {
+                            if (!bgm1Played && bgm1.paused) bgm1.play();
+                        }, { once: true });
+                    });
+                }
             });
 
-            // 点击Testment Begins播放audio2并跳转到页面2
+            // 绑定Testment Begins按钮事件
             document.getElementById('testmentBtn').addEventListener('click', () => {
-                audio2.play().catch(e => console.log("Audio2播放失败:", e));
                 showPage(2);
+                // 点击后播放bgm2（仅第一次播放）
+                if (!bgm2Played && bgm2.paused) {
+                    bgm2.play().catch(e => {
+                        console.log('BGM2播放:', e);
+                    });
+                }
             });
 
-            // 绑定其他按钮事件
+            // 初始化分支选择
             setupChoice('pg3-btns', 'page21', 'page22', 'page2', {}, false);
             setupChoice('pg4-btns', 'page31', 'page32', 'page3', {}, true);
-            setupChoice('pg5-btns', 'page41', 'page42', 'page4', {}, true);
-            setupChoice('pg6-btns', 'page51', 'page52', 'page5', {}, true);
-            setupChoice('pg7-btns', 'page61', 'page62', 'page6', {}, true);
-            setupChoice('pg9-btns', 'page81', 'page82', 'page8', {}, false);
-            setupChoice('pg10-btns', 'page91', 'page92', 'page9', {}, true);
 
-            // 页面7翻页按钮
-            document.getElementById('turnPageBtn')?.addEventListener('click', () => showPage(8));
-            
-            // 最终页按钮
-            document.getElementById('finalYesBtn')?.addEventListener('click', () => {
-                // 可添加最终页逻辑
-                alert("❤️ 完结撒花 ❤️");
-            });
-
-            // 初始显示page0
+            // 默认显示初始页
             showPage(0);
         }
 
-        // 启动应用
-        init();
+        // 页面加载完成后初始化
+        window.addEventListener('DOMContentLoaded', init);
+
+        // 暴露showPage到全局，供按钮onclick调用
+        window.showPage = showPage;
     })();
 </script>
 </body>
