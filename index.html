@@ -21,7 +21,7 @@
             align-items: center;
             justify-content: center;
             padding: 2rem;
-            text-align: center; /* 全局文本居中 */
+            text-align: center;
         }
 
         .archive-container {
@@ -36,7 +36,7 @@
         .page {
             padding: 2.2rem 2.5rem 2.8rem;
             transition: background 0.4s ease;
-            text-align: center; /* 页面内文本居中 */
+            text-align: center;
         }
 
         .hidden-page {
@@ -46,8 +46,8 @@
         .eye-tape-deco {
             margin-bottom: 1.8rem;
             display: flex;
-            justify-content: center; /* 装饰元素居中 */
-            gap: 20px; /* 替换letter-spacing为gap，避免溢出 */
+            justify-content: center;
+            gap: 20px;
             align-items: center;
             font-size: 2rem;
             opacity: 0.7;
@@ -70,7 +70,7 @@
             color: transparent;
             text-shadow: 0 0 4px #2e5c2e;
             margin-bottom: 1.2rem;
-            text-align: center; /* 标题强制居中 */
+            text-align: center;
         }
 
         h2 {
@@ -81,11 +81,11 @@
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
-            text-align: center; /* 二级标题居中 */
+            text-align: center;
         }
 
         .story-text {
-            margin: 1.8rem auto; /* 水平居中 */
+            margin: 1.8rem auto;
             background: rgba(0, 0, 0, 0.5);
             border-radius: 1.5rem;
             padding: 1.2rem 1.5rem;
@@ -94,10 +94,9 @@
             font-size: 1.08rem;
             line-height: 1.7;
             color: #f2f2e6;
-            text-align: left; /* 故事文本保留左对齐（首行缩进），仅容器居中 */
+            text-align: left;
         }
 
-        /* 段落首行缩进2字符 */
         .story-text p {
             text-indent: 2em;
             margin-bottom: 0.85em;
@@ -110,9 +109,9 @@
             display: flex;
             gap: 1.2rem;
             flex-wrap: wrap;
-            margin: 2rem auto 1rem; /* 按钮组居中 */
-            justify-content: center; /* 按钮内部居中 */
-            max-width: 80%; /* 限制按钮组宽度 */
+            margin: 2rem auto 1rem;
+            justify-content: center;
+            max-width: 80%;
         }
         .choice-btn, .cont-btn {
             background: #1e2a1f;
@@ -150,14 +149,14 @@
             background: #121e16;
             border-radius: 1.2rem;
             padding: 1rem 1.3rem;
-            margin: 1rem auto; /* 反馈文本居中 */
+            margin: 1rem auto;
             border-left: 4px solid #ffd966;
             color: #f0f0d0;
             font-style: italic;
             font-size: 0.96rem;
             line-height: 1.5;
-            max-width: 75ch; /* 限制反馈宽度 */
-            text-align: left; /* 反馈文本左对齐 */
+            max-width: 75ch;
+            text-align: left;
         }
 
         .theme-green-black { background: radial-gradient(ellipse at 30% 40%, #102020, #030707); }
@@ -189,9 +188,20 @@
 
 <script>
     (function() {
-        // ---------- 模拟音频（不依赖网络，避免加载失败导致异常）----------
-        const audio1 = { play: () => Promise.resolve() };   // 静音占位，不影响功能
-        const audio2 = { play: () => Promise.resolve() };
+        // ---------- 音频配置（仅播放1次，不循环）----------
+        // 创建音频对象，设置不循环
+        const audio1 = new Audio('bgm1.mp3');
+        audio1.loop = false; // 禁用循环
+        const audio2 = new Audio('bgm2.mp3');
+        audio2.loop = false; // 禁用循环
+        
+        // 音频播放封装（确保仅播放1次）
+        function playAudioOnce(audio) {
+            // 先停止并重置播放位置，再播放
+            audio.pause();
+            audio.currentTime = 0;
+            audio.play().catch(e => console.log("音频播放提示:", e));
+        }
         
         // ---------- 全局状态 ----------
         let currentPageIndex = 0;
@@ -203,9 +213,8 @@
         function formatStoryTexts() {
             const containers = document.querySelectorAll('.story-text');
             containers.forEach(container => {
-                if (container.querySelector('p')) return; // 已格式化
+                if (container.querySelector('p')) return;
                 let html = container.innerHTML;
-                // 分割 <br> 标签（忽略大小写）
                 const lines = html.split(/<br\s*\/?>/i);
                 if (lines.length <= 1) return;
                 const paragraphs = lines.map(l => l.trim()).filter(l => l !== '');
@@ -215,29 +224,23 @@
             });
         }
         
-        // 显示指定页面（修复：支持带后缀的页面ID，如page21、page22）
+        // 显示指定页面
         function showPage(pageId) {
-            // 隐藏所有页面
             document.querySelectorAll('.page').forEach(p => p.classList.add('hidden-page'));
-            // 拼接页面ID：如果是数字（如2）则为page2；如果是字符串（如21）则为page21
             let targetId = typeof pageId === 'number' ? `page${pageId}` : pageId;
-            // 显示目标页面
             const target = document.getElementById(targetId);
             if (target) {
                 target.classList.remove('hidden-page');
-            } else {
-                console.warn('页面不存在:', targetId); // 调试用，可删除
             }
             currentPageIndex = pageId;
-            // 最终页更新计数
             if (pageId === 10) updateFinalPage();
-            // 第一页播放音频（模拟）
+            // 第一页播放bgm1（仅1次）
             if (pageId === 1) {
-                audio1.play().catch(e => console.log("音频播放跳过:", e));
+                playAudioOnce(audio1);
             }
         }
         
-        // 通用分支设置（修复：跳转页面ID改为字符串，如'page21'而非2.1）
+        // 通用分支设置
         function setupChoice(btnsId, choice1Page, choice2Page, pageKey, textMap, isCounting = true) {
             const btnsDiv = document.getElementById(btnsId);
             if (!btnsDiv) return;
@@ -248,21 +251,17 @@
                 if (pageLocked[pageKey]) return;
                 
                 const choiceVal = parseInt(e.currentTarget.getAttribute('data-choice'));
-                // 统计选择2的次数
                 if (isCounting && countPages.includes(pageKey)) {
                     choiceRecord[pageKey] = (choiceVal === 2);
                 }
                 
-                // 锁定当前页面选项
                 pageLocked[pageKey] = true;
                 btns.forEach(btn => btn.disabled = true);
                 
-                // 跳转到对应选项的反馈页面（直接使用字符串ID）
                 const targetPage = choiceVal === 1 ? choice1Page : choice2Page;
                 showPage(targetPage);
             };
             
-            // 绑定点击事件
             btns.forEach(btn => {
                 btn.addEventListener('click', clickHandler);
             });
@@ -270,7 +269,6 @@
         
         // 更新最终页面计数
         function updateFinalPage() {
-            // 统计选择2的次数
             const count2 = Object.values(choiceRecord).filter(val => val === true).length;
             const total = count2 + 1;
             
@@ -280,7 +278,7 @@
             }
         }
         
-        // 构建全量HTML（修复：反馈页ID改为page21/page22等纯数字格式，避免小数点）
+        // 构建全量HTML（删除所有彩蛋，调整最终页按钮文本）
         function getPagesHTML() {
             return `
             <!-- 初始页 -->
@@ -310,7 +308,7 @@
                 </div>
             </div>
 
-            <!-- 页面21：选项1反馈页（修复ID：page21 替代 page2-1） -->
+            <!-- 页面21：选项1反馈页 -->
             <div id="page21" class="page theme-purple hidden-page">
                 <h2 class="glitch-title" style="font-size:1.8rem;">三句话，让他为我花了八万 · 选择反馈</h2>
                 <div class="extra-feedback">
@@ -319,7 +317,7 @@
                 <div class="button-group"><button class="cont-btn" onclick="showPage(3)">Continue →</button></div>
             </div>
 
-            <!-- 页面22：选项2反馈页（修复ID：page22 替代 page2-2） -->
+            <!-- 页面22：选项2反馈页 -->
             <div id="page22" class="page theme-purple hidden-page">
                 <h2 class="glitch-title" style="font-size:1.8rem;">三句话，让他为我花了八万 · 选择反馈</h2>
                 <div class="extra-feedback">
@@ -338,7 +336,7 @@
                 </div>
             </div>
 
-            <!-- 页面31：选项1反馈页（修复ID：page31 替代 page3-1） -->
+            <!-- 页面31：选项1反馈页 -->
             <div id="page31" class="page theme-yellow hidden-page">
                 <h2 class="glitch-title" style="font-size:1.8rem;">画师不需要朋友 · 选择反馈</h2>
                 <div class="extra-feedback">
@@ -347,7 +345,7 @@
                 <div class="button-group"><button class="cont-btn" onclick="showPage(4)">Continue →</button></div>
             </div>
 
-            <!-- 页面32：选项2反馈页（修复ID：page32 替代 page3-2） -->
+            <!-- 页面32：选项2反馈页 -->
             <div id="page32" class="page theme-yellow hidden-page">
                 <h2 class="glitch-title" style="font-size:1.8rem;">画师不需要朋友 · 选择反馈</h2>
                 <div class="extra-feedback">
@@ -366,7 +364,7 @@
                 </div>
             </div>
 
-            <!-- 页面41：选项1反馈页（修复ID：page41 替代 page4-1） -->
+            <!-- 页面41：选项1反馈页 -->
             <div id="page41" class="page theme-purple hidden-page">
                 <h2 class="glitch-title">申请评选室友最炸裂行为 · 选择反馈</h2>
                 <div class="extra-feedback">
@@ -375,7 +373,7 @@
                 <div class="button-group"><button class="cont-btn" onclick="showPage(5)">Continue →</button></div>
             </div>
 
-            <!-- 页面42：选项2反馈页（修复ID：page42 替代 page4-2） -->
+            <!-- 页面42：选项2反馈页 -->
             <div id="page42" class="page theme-purple hidden-page">
                 <h2 class="glitch-title">申请评选室友最炸裂行为 · 选择反馈</h2>
                 <div class="extra-feedback">
@@ -394,7 +392,7 @@
                 </div>
             </div>
 
-            <!-- 页面51：选项1反馈页（修复ID：page51 替代 page5-1） -->
+            <!-- 页面51：选项1反馈页 -->
             <div id="page51" class="page theme-yellow hidden-page">
                 <h2 class="glitch-title">仇人送的花好难看 · 选择反馈</h2>
                 <div class="extra-feedback">
@@ -403,7 +401,7 @@
                 <div class="button-group"><button class="cont-btn" onclick="showPage(6)">Continue →</button></div>
             </div>
 
-            <!-- 页面52：选项2反馈页（修复ID：page52 替代 page5-2） -->
+            <!-- 页面52：选项2反馈页 -->
             <div id="page52" class="page theme-yellow hidden-page">
                 <h2 class="glitch-title">仇人送的花好难看 · 选择反馈</h2>
                 <div class="extra-feedback">
@@ -422,7 +420,7 @@
                 </div>
             </div>
 
-            <!-- 页面61：选项1反馈页（修复ID：page61 替代 page6-1） -->
+            <!-- 页面61：选项1反馈页 -->
             <div id="page61" class="page theme-purple hidden-page">
                 <h2 class="glitch-title">寡妇门前是非多 · 选择反馈</h2>
                 <div class="extra-feedback">
@@ -431,7 +429,7 @@
                 <div class="button-group"><button class="cont-btn" onclick="showPage(7)">Continue →</button></div>
             </div>
 
-            <!-- 页面62：选项2反馈页（修复ID：page62 替代 page6-2） -->
+            <!-- 页面62：选项2反馈页 -->
             <div id="page62" class="page theme-purple hidden-page">
                 <h2 class="glitch-title">寡妇门前是非多 · 选择反馈</h2>
                 <div class="extra-feedback">
@@ -457,7 +455,7 @@
                 </div>
             </div>
 
-            <!-- 页面81：选项1反馈页（修复ID：page81 替代 page8-1） -->
+            <!-- 页面81：选项1反馈页 -->
             <div id="page81" class="page theme-yellow hidden-page">
                 <h2 class="glitch-title">海王爱鱼有错吗？ · 选择反馈</h2>
                 <div class="extra-feedback">
@@ -466,7 +464,7 @@
                 <div class="button-group"><button class="cont-btn" onclick="showPage(9)">Continue →</button></div>
             </div>
 
-            <!-- 页面82：选项2反馈页（修复ID：page82 替代 page8-2） -->
+            <!-- 页面82：选项2反馈页 -->
             <div id="page82" class="page theme-yellow hidden-page">
                 <h2 class="glitch-title">海王爱鱼有错吗？ · 选择反馈</h2>
                 <div class="extra-feedback">
@@ -485,7 +483,7 @@
                 </div>
             </div>
 
-            <!-- 页面91：选项1反馈页（修复ID：page91 替代 page9-1） -->
+            <!-- 页面91：选项1反馈页 -->
             <div id="page91" class="page theme-purple hidden-page">
                 <h2 class="glitch-title">别人都想强了我，只有他想比我强 · 选择反馈</h2>
                 <div class="extra-feedback">
@@ -494,7 +492,7 @@
                 <div class="button-group"><button class="cont-btn" onclick="showPage(10)">Continue →</button></div>
             </div>
 
-            <!-- 页面92：选项2反馈页（修复ID：page92 替代 page9-2） -->
+            <!-- 页面92：选项2反馈页 -->
             <div id="page92" class="page theme-purple hidden-page">
                 <h2 class="glitch-title">别人都想强了我，只有他想比我强 · 选择反馈</h2>
                 <div class="extra-feedback">
@@ -503,13 +501,13 @@
                 <div class="button-group"><button class="cont-btn" onclick="showPage(10)">Continue →</button></div>
             </div>
 
-            <!-- 最终页 -->
+            <!-- 最终页（调整按钮文本，删除所有彩蛋） -->
             <div id="page10" class="page theme-purple hidden-page">
                 <h2 class="glitch-title" id="finalTitle">雄伟的同人女拯救了X次家产</h2>
                 <div class="story-text" id="finalText">没算雯莉和波莱，毕竟雯莉不用拯救，波莱......也是另一种意义上的不用拯救。<br>我Cow我真的累死了。小小文科生研究大大代码，感谢AI。<br>第七个年头，希望你喜欢这份礼物。不喜欢也不要紧，反正你会喜欢我。</div>
                 <div class="button-group">
                     <button id="finalYesBtn" class="choice-btn">✨ 当然。</button>
-                    <button id="finalNoBtn" class="choice-btn">💢 不喜欢，爬。</button>
+                    <button id="finalNoBtn" class="choice-btn">💢 ......再来一次，你确定吗？</button>
                 </div>
             </div>
             `;
@@ -520,24 +518,28 @@
             const container = document.getElementById('pagesContainer');
             container.innerHTML = getPagesHTML();
             
-            // 格式化文本（br转p）
+            // 格式化文本
             formatStoryTexts();
             
             // 绑定初始按钮事件
             document.getElementById('startBtn').addEventListener('click', () => showPage(1));
-            document.getElementById('testmentBtn').addEventListener('click', () => showPage(2));
+            
+            // 绑定Testment按钮事件（点击时播放bgm2，仅1次）
+            document.getElementById('testmentBtn').addEventListener('click', () => {
+                playAudioOnce(audio2); // 播放bgm2
+                showPage(2); // 跳转到page2
+            });
+            
             document.getElementById('turnPageBtn').addEventListener('click', () => showPage(8));
             
-            // 绑定最终页按钮事件（删除了多余的alert文案）
+            // 绑定最终页按钮事件（仅返回初始页+重置状态，无任何彩蛋文案）
             document.getElementById('finalYesBtn').addEventListener('click', () => {
-                showPage(0); // 回到初始页
-                // 重置状态
+                showPage(0);
                 choiceRecord = { page3: null, page4: null, page5: null, page6: null, page9: null };
                 pageLocked = { page3: false, page4: false, page5: false, page6: false, page7: false, page8: false, page9: false, page10: false };
             });
             document.getElementById('finalNoBtn').addEventListener('click', () => {
-                showPage(0); // 回到初始页
-                // 重置状态
+                showPage(0);
                 choiceRecord = { page3: null, page4: null, page5: null, page6: null, page9: null };
                 pageLocked = { page3: false, page4: false, page5: false, page6: false, page7: false, page8: false, page9: false, page10: false };
             });
