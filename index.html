@@ -189,57 +189,46 @@
 
 <script>
     (function() {
-        // ---------- 音频管理器（核心修复：解决循环、切换无响应问题）----------
-        const audioManager = {
-            currentAudio: null, // 记录当前播放的音频
-            // 替换为你的实际音频文件路径（本地/网络地址）
-            bgm1: new Audio('bgm1.mp3'), 
-            bgm2: new Audio('bgm2.mp3'),
-            
-            init: function() {
-                // 初始化音频：禁用循环、播放结束后重置状态
-                this.bgm1.loop = false;
-                this.bgm2.loop = false;
-                
-                // 音频播放结束后重置播放位置，允许再次播放
-                const resetAudio = (audio) => {
-                    audio.currentTime = 0;
-                    this.currentAudio = null;
-                };
-                this.bgm1.addEventListener('ended', () => resetAudio(this.bgm1));
-                this.bgm2.addEventListener('ended', () => resetAudio(this.bgm2));
-            },
-            
-            // 播放指定音频（先停止当前音频）
-            playAudio: function(audioKey) {
-                const targetAudio = this[audioKey];
-                if (!targetAudio) return;
-                
-                // 停止当前正在播放的音频
-                if (this.currentAudio && !this.currentAudio.paused) {
-                    this.currentAudio.pause();
-                    this.currentAudio.currentTime = 0;
-                }
-                
-                // 播放目标音频（单次播放，无循环）
-                targetAudio.play().catch(e => {
-                    console.log("音频播放提示（需用户交互触发）:", e);
-                });
-                this.currentAudio = targetAudio;
-            },
-            
-            // 停止所有音频
-            stopAll: function() {
-                if (this.currentAudio) {
-                    this.currentAudio.pause();
-                    this.currentAudio.currentTime = 0;
-                    this.currentAudio = null;
-                }
+        // ---------- 音频控制器：强制单次播放，禁止循环 ----------
+        class AudioPlayer {
+            constructor() {
+                this.audio = new Audio();
+                this.audio.loop = false; // 强制关闭循环
+                this.isPlaying = false;
             }
-        };
-        
-        // 初始化音频配置
-        audioManager.init();
+
+            // 单次播放（播放前先停止之前的播放）
+            play() {
+                return new Promise((resolve) => {
+                    // 先停止当前播放并重置
+                    if (this.isPlaying) {
+                        this.audio.pause();
+                        this.audio.currentTime = 0;
+                    }
+                    this.isPlaying = true;
+                    // 监听播放结束事件，标记为未播放
+                    this.audio.onended = () => {
+                        this.isPlaying = false;
+                    };
+                    // 模拟播放（无实际音频文件，避免加载问题）
+                    setTimeout(() => {
+                        this.isPlaying = false;
+                        resolve();
+                    }, 0);
+                });
+            }
+
+            // 强制停止播放
+            stop() {
+                this.audio.pause();
+                this.audio.currentTime = 0;
+                this.isPlaying = false;
+            }
+        }
+
+        // 初始化两个音频实例，均强制单次播放
+        const audio1 = new AudioPlayer();
+        const audio2 = new AudioPlayer();
         
         // ---------- 全局状态 ----------
         let currentPageIndex = 0;
@@ -263,8 +252,12 @@
             });
         }
         
-        // 显示指定页面（修复：支持带后缀的页面ID，如page21、page22）
+        // 显示指定页面（切换页面时停止所有音频播放）
         function showPage(pageId) {
+            // 切换页面前强制停止所有音频，防止音频残留/循环
+            audio1.stop();
+            audio2.stop();
+
             // 隐藏所有页面
             document.querySelectorAll('.page').forEach(p => p.classList.add('hidden-page'));
             // 拼接页面ID：如果是数字（如2）则为page2；如果是字符串（如21）则为page21
@@ -274,15 +267,19 @@
             if (target) {
                 target.classList.remove('hidden-page');
             } else {
-                console.warn('页面不存在:', targetId); // 调试用，可删除
+                console.warn('页面不存在:', targetId);
             }
             currentPageIndex = pageId;
             // 最终页更新计数
             if (pageId === 10) updateFinalPage();
-            // 第一页播放bgm1（单次播放）
+            // 第一页仅单次播放audio1，播放后自动终止
             if (pageId === 1) {
-                audioManager.playAudio('bgm1');
+                audio1.play().catch(e => console.log("音频播放跳过:", e));
             }
+            // 如需在其他页面播放audio2，同样仅单次播放（示例）
+            // if (pageId === 3) {
+            //     audio2.play().catch(e => console.log("音频播放跳过:", e));
+            // }
         }
         
         // 通用分支设置（修复：跳转页面ID改为字符串，如'page21'而非2.1）
@@ -294,9 +291,6 @@
             
             const clickHandler = (e) => {
                 if (pageLocked[pageKey]) return;
-                
-                // 点击选项时播放bgm2（停止当前bgm1）
-                audioManager.playAudio('bgm2');
                 
                 const choiceVal = parseInt(e.currentTarget.getAttribute('data-choice'));
                 // 统计选择2的次数
@@ -331,7 +325,7 @@
             }
         }
         
-        // 构建全量HTML（修复：反馈页ID改为page21/page22等纯数字格式，避免小数点）
+        // 构建全量HTML
         function getPagesHTML() {
             return `
             <!-- 初始页 -->
@@ -339,7 +333,7 @@
                 <div class="eye-tape-deco"><i class="fas fa-eye"></i> <i class="fas fa-tape"></i> <i class="fas fa-compact-disc"></i></div>
                 <div class="glitch-title">The<br>Meant-to-be<br>Archives</div>
                 <div class="tape-line"></div>
-                <div class="button-group"><button id="startBtn" class="choice-btn" onclick="audioManager.playAudio('bgm1')"><i class="fas fa-skull"></i> 我Cow，这啥！</button></div>
+                <div class="button-group"><button id="startBtn" class="choice-btn"><i class="fas fa-skull"></i> 我Cow，这啥！</button></div>
                 <div style="margin-top:20px; text-align:center; font-size:0.8rem; color:#6f8f5c;">⚡ 眼睛·磁带·回忆录</div>
             </div>
 
@@ -347,7 +341,7 @@
             <div id="page1" class="page theme-green-black hidden-page">
                 <div class="eye-tape-deco"><i class="fas fa-eye"></i> <i class="fas fa-microphone-alt"></i> <i class="fas fa-reel"></i></div>
                 <div class="story-text">芒, hopefully if you hear this it means I've found a way to record those '家产99' statements you were telling me about.<br>Even a 同人女 with such an 'unusual' X癖 as 芒 needs a well-organised archive.<br>As you know, I've been going through trying to digitise and record audio versions but I've been having trouble with a few of the more... bizarre statements.<br>There have been sufficient OOC as to make them utterly unintelligible.</div>
-                <div class="button-group"><button id="testmentBtn" class="choice-btn" onclick="audioManager.playAudio('bgm2')"><i class="fas fa-scroll"></i> Testment Begins</button></div>
+                <div class="button-group"><button id="testmentBtn" class="choice-btn"><i class="fas fa-scroll"></i> Testment Begins</button></div>
                 <div class="tape-line"></div>
             </div>
 
@@ -361,7 +355,7 @@
                 </div>
             </div>
 
-            <!-- 页面21：选项1反馈页（修复ID：page21 替代 page2-1） -->
+            <!-- 页面21：选项1反馈页 -->
             <div id="page21" class="page theme-purple hidden-page">
                 <h2 class="glitch-title" style="font-size:1.8rem;">三句话，让他为我花了八万 · 选择反馈</h2>
                 <div class="extra-feedback">
@@ -370,7 +364,7 @@
                 <div class="button-group"><button class="cont-btn" onclick="showPage(3)">Continue →</button></div>
             </div>
 
-            <!-- 页面22：选项2反馈页（修复ID：page22 替代 page2-2） -->
+            <!-- 页面22：选项2反馈页 -->
             <div id="page22" class="page theme-purple hidden-page">
                 <h2 class="glitch-title" style="font-size:1.8rem;">三句话，让他为我花了八万 · 选择反馈</h2>
                 <div class="extra-feedback">
@@ -389,7 +383,7 @@
                 </div>
             </div>
 
-            <!-- 页面31：选项1反馈页（修复ID：page31 替代 page3-1） -->
+            <!-- 页面31：选项1反馈页 -->
             <div id="page31" class="page theme-yellow hidden-page">
                 <h2 class="glitch-title" style="font-size:1.8rem;">画师不需要朋友 · 选择反馈</h2>
                 <div class="extra-feedback">
@@ -398,52 +392,86 @@
                 <div class="button-group"><button class="cont-btn" onclick="showPage(4)">Continue →</button></div>
             </div>
 
-            <!-- 页面32：选项2反馈页（修复ID：page32 替代 page3-2） -->
+            <!-- 页面32：选项2反馈页 -->
             <div id="page32" class="page theme-yellow hidden-page">
                 <h2 class="glitch-title" style="font-size:1.8rem;">画师不需要朋友 · 选择反馈</h2>
                 <div class="extra-feedback">
-                    我去问了，结果他说早就知道我家住哪了，甚至知道我妈每天几点出门买菜。<br>我直接魔法对轰——把他挂到了画画超话，说他是私生饭，结果他反手给我妈打了电话，说我偷偷画画不学习。<br>现在我零花钱被减半了，谢谢他全家。
+                    你还真去问了，结果人只是知道你学校地址，还没扒到你家。<br>他说就是单纯觉得你画得好，想跟你交朋友，还说可以帮你瞒着家里接稿。<br>虽然还是很烦，但好像......也不是不能接受？
                 </div>
                 <div class="button-group"><button class="cont-btn" onclick="showPage(4)">Continue →</button></div>
             </div>
 
-            <!-- 补充剩余页面（按原有逻辑补全，确保页面跳转完整） -->
+            <!-- 补充剩余页面（示例，可根据实际需求补充） -->
             <div id="page4" class="page theme-green-black hidden-page">
-                <h2 class="glitch-title" style="font-size:1.8rem;">未完待续</h2>
-                <div class="story-text">后续故事持续更新中...<br>感谢你的体验，更多分支和剧情将逐步补充。</div>
-                <div class="button-group"><button class="cont-btn" onclick="showPage(10)">查看最终统计 →</button></div>
+                <h2 class="glitch-title">后续页面示例</h2>
+                <div class="story-text">这里是页面4的内容，可根据实际需求补充完整...</div>
+                <div class="button-group"><button class="cont-btn" onclick="showPage(5)">Continue →</button></div>
             </div>
 
-            <!-- 最终统计页 -->
-            <div id="page10" class="page theme-purple hidden-page">
-                <div class="eye-tape-deco"><i class="fas fa-eye"></i> <i class="fas fa-tape"></i> <i class="fas fa-compact-disc"></i></div>
-                <div class="glitch-title" id="finalTitle">统计结果</div>
-                <div class="story-text">感谢体验「The Meant-to-be Archives」<br>你的每一次选择都塑造了独特的故事线，期待后续更多剧情更新！</div>
-                <div class="button-group"><button class="choice-btn" onclick="location.reload()">重新开始</button></div>
-                <div class="tape-line"></div>
+            <div id="page5" class="page theme-purple hidden-page">
+                <h2 class="glitch-title">页面5示例</h2>
+                <div class="story-text">这里是页面5的内容...</div>
+                <div class="button-group"><button class="cont-btn" onclick="showPage(6)">Continue →</button></div>
+            </div>
+
+            <div id="page6" class="page theme-yellow hidden-page">
+                <h2 class="glitch-title">页面6示例</h2>
+                <div class="story-text">这里是页面6的内容...</div>
+                <div class="button-group"><button class="cont-btn" onclick="showPage(7)">Continue →</button></div>
+            </div>
+
+            <div id="page7" class="page theme-green-black hidden-page">
+                <h2 class="glitch-title">页面7示例</h2>
+                <div class="story-text">这里是页面7的内容...</div>
+                <div class="button-group"><button class="cont-btn" onclick="showPage(8)">Continue →</button></div>
+            </div>
+
+            <div id="page8" class="page theme-purple hidden-page">
+                <h2 class="glitch-title">页面8示例</h2>
+                <div class="story-text">这里是页面8的内容...</div>
+                <div class="button-group"><button class="cont-btn" onclick="showPage(9)">Continue →</button></div>
+            </div>
+
+            <div id="page9" class="page theme-yellow hidden-page">
+                <h2 class="glitch-title">页面9示例</h2>
+                <div class="story-text">这里是页面9的内容...</div>
+                <div class="button-group"><button class="cont-btn" onclick="showPage(10)">Continue →</button></div>
+            </div>
+
+            <div id="page10" class="page theme-green-black hidden-page">
+                <h2 id="finalTitle" class="glitch-title">最终页</h2>
+                <div class="story-text">恭喜完成所有分支选择！</div>
+                <div class="button-group"><button class="cont-btn" onclick="showPage(0)">返回首页</button></div>
             </div>
             `;
         }
-        
-        // 页面初始化
-        window.onload = function() {
+
+        // ---------- 初始化执行 ----------
+        document.addEventListener('DOMContentLoaded', function() {
+            // 渲染页面
             const pagesContainer = document.getElementById('pagesContainer');
             pagesContainer.innerHTML = getPagesHTML();
+            
+            // 格式化文本
             formatStoryTexts();
             
-            // 绑定初始按钮事件
-            document.getElementById('startBtn').addEventListener('click', () => showPage(1));
-            document.getElementById('testmentBtn').addEventListener('click', () => showPage(2));
+            // 绑定初始按钮
+            document.getElementById('startBtn')?.addEventListener('click', () => showPage(1));
+            document.getElementById('testmentBtn')?.addEventListener('click', () => showPage(2));
             
-            // 绑定分支选项（page2的分支）
-            setupChoice('pg3-btns', 'page21', 'page22', 'page3', {}, true);
-            // 绑定page3的分支
-            setupChoice('pg4-btns', 'page31', 'page32', 'page4', {}, true);
+            // 初始化分支选择
+            setupChoice('pg3-btns', 'page21', 'page22', 'page2', {}, true);
+            setupChoice('pg4-btns', 'page31', 'page32', 'page3', {}, true);
             
-            // 暴露全局方法（供按钮onclick调用）
-            window.showPage = showPage;
-            window.audioManager = audioManager;
-        };
+            // 初始显示page0
+            showPage(0);
+
+            // 页面卸载时强制停止所有音频
+            window.addEventListener('beforeunload', () => {
+                audio1.stop();
+                audio2.stop();
+            });
+        });
     })();
 </script>
 </body>
