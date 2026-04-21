@@ -528,14 +528,18 @@
             document.getElementById('testmentBtn').addEventListener('click', () => showPage(2));
             document.getElementById('turnPageBtn').addEventListener('click', () => showPage(8));
             
-            // 绑定最终页按钮事件
+            // 绑定最终页按钮事件（删除了多余的alert文案）
             document.getElementById('finalYesBtn').addEventListener('click', () => {
-                alert(爽哉。我也喜欢你。);
                 showPage(0); // 回到初始页
                 // 重置状态
                 choiceRecord = { page3: null, page4: null, page5: null, page6: null, page9: null };
                 pageLocked = { page3: false, page4: false, page5: false, page6: false, page7: false, page8: false, page9: false, page10: false };
-           
+            });
+            document.getElementById('finalNoBtn').addEventListener('click', () => {
+                showPage(0); // 回到初始页
+                // 重置状态
+                choiceRecord = { page3: null, page4: null, page5: null, page6: null, page9: null };
+                pageLocked = { page3: false, page4: false, page5: false, page6: false, page7: false, page8: false, page9: false, page10: false };
             });
             
             // 初始化所有分支逻辑
